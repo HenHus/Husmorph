@@ -83,3 +83,7 @@ Select how many *trials* you would like to have. A *trial* is a set of parameter
 Once a model is created, you can try to predict landmarks in the '**Set landmarks on images**' - tab in the interface, and select the model that were created. Also remember to select the folder of images to predict landmarks on.
 
 **Make sure the images for prediction has the same resolution as the images used to train the model.**
+
+## Exporting
+
+As of now, it's possible to export the XML data to CSV format. Other export formats will be added in the future.
