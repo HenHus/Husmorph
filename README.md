@@ -1,5 +1,3 @@
-**FILES COMING BUT NOT COMPLETELY FINISHED YET**
-
 *As of now, the code is not cleaned up, but it's working so I decided to upload the tool anyways. Enjoy :)*
 
 *This README file is also under construction and will be updated.*
