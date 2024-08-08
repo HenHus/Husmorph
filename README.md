@@ -1,6 +1,6 @@
 **FILES COMING BUT NOT COMPLETELY FINISHED YET**
 
-*As of now, landmark placement and machine learning training works, but the prediction feature is currently not included yet. This will come shortly!*
+*As of now, the code is not cleaned up, but it's working so I decided to upload the tool anyways. Enjoy :)*
 
 *This README file is also under construction and will be updated.*
 
@@ -79,3 +79,7 @@ You have to select how many *threads* you want your computer to use. The more th
 Select how many *trials* you would like to have. A *trial* is a set of parameters used to find the best parameters for your dataset. The more trials, the higher the success to find the best possible machine learning model for you. However, twice as many trials also means twice as long time to complete the training.
 
 *Imagine a rifle shooter. He might perform okay in the start, but if you give him some time to train, he will overall get better and better. At one point he might also hit the perfect shot in the center of the target.*
+
+Once a model is created, you can try to predict landmarks in the '**Set landmarks on images**' - tab in the interface, and select the model that were created. Also remember to select the folder of images to predict landmarks on.
+
+**Make sure the images for prediction has the same resolution as the images used to train the model.**
