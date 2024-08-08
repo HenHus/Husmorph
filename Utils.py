@@ -9,6 +9,7 @@ import dlib
 import optuna
 from joblib import Parallel, delayed
 from sklearn.model_selection import KFold
+from xml.dom import minidom
 import glob
 import pandas as pd
 import math
@@ -387,6 +388,55 @@ class ShapePredictorTrainer:
         print("Best average validation deviation:")
         print(study.best_value)
 
+
+
+def predict_landmarks(predictor_name, images, ignore=None):
+    extensions = {'.jpg', '.JPG', '.jpeg', '.JPEG',}
+    predictor = dlib.shape_predictor(predictor_name)
+    root = ET.Element('dataset')
+    root.append(ET.Element('name'))
+    root.append(ET.Element('comment'))
+    images_e = ET.Element('images')
+    root.append(images_e)
+
+    for f in glob.glob(os.path.join(images, '*')):
+        ext = os.path.splitext(f)[1]
+        if ext in extensions:
+            img = cv2.imread(f)
+            image_e = ET.Element('image')
+            image_e.set('file', str(f))
+
+            # Assuming a single face in the image covering the whole image
+            e = dlib.rectangle(left=1, top=1, right=img.shape[1]-1, bottom=img.shape[0]-1)
+            shape = predictor(img, e)
+            box = ET.Element('box')
+            box.set('top', '1')
+            box.set('left', '1')
+            box.set('width', str(img.shape[1]-1))
+            box.set('height', str(img.shape[0]-1))
+
+            for i in range(shape.num_parts):
+                if ignore is None or i not in ignore:
+                    part = ET.Element('part')
+                    part.set('name', str(i))
+                    part.set('x', str(shape.part(i).x))
+                    part.set('y', str(shape.part(i).y))
+                    box.append(part)
+
+            box[:] = sorted(box, key=lambda child: int(child.get('name')))
+            image_e.append(box)
+            images_e.append(image_e)
+
+    # Generate the output file name based on the image folder
+    folder_name = os.path.basename(images)
+    out_file = f"{folder_name}_output.xml"
+
+    et = ET.ElementTree(root)
+    xmlstr = minidom.parseString(ET.tostring(et.getroot())).toprettyxml(indent="   ")
+    with open(out_file, "w") as f:
+        f.write(xmlstr)
+
+
 class XMLtoCSVConverter:
     def __init__(self, xml_file, csv_file="data.csv"):
         self.xml_file = xml_file
@@ -517,7 +567,7 @@ class DatasetSplitter:
         self.copy_files(train_files, self.train_folder)
         self.copy_files(test_files, self.test_folder)
 
-# Example usage
-if __name__ == "__main__":
-    splitter = DatasetSplitter('Pictures')
-    splitter.split_dataset()
+def main():
+    predict_landmarks("best.dat", 'Example')
+
+main()

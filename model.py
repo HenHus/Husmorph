@@ -1,5 +1,5 @@
 from tkinter import filedialog
-from Utils import CoordinateOverlay, LandmarkClass, ShapePredictorTrainer, XMLtoCSVConverter, DatasetSplitter
+from Utils import CoordinateOverlay, LandmarkClass, ShapePredictorTrainer, predict_landmarks, XMLtoCSVConverter, DatasetSplitter
 
 def getHomePageText1():
     return """
@@ -48,6 +48,12 @@ def init_overlay(file):
 def init_landmarks(image_folder, landmarks):
     try:
         landmarks = LandmarkClass(image_folder, landmarks)
+    except Exception as e:
+        return e
+
+def predict_new_landmarks(ml_model, images):
+    try:
+        predict_landmarks(ml_model, images)
     except Exception as e:
         return e
 
