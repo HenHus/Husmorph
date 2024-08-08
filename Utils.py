@@ -566,8 +566,3 @@ class DatasetSplitter:
         train_files, test_files = self.split_files(all_files)
         self.copy_files(train_files, self.train_folder)
         self.copy_files(test_files, self.test_folder)
-
-def main():
-    predict_landmarks("best.dat", 'Example')
-
-main()
