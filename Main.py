@@ -17,6 +17,7 @@ def show_frame(frame):
 
 def init_overlay():
     global xml
+    e =  None
     e = model.init_overlay(xml)
     if e is not None:
         messagebox.showerror("Error", f"Make sure the XML file is correct.\n\n{e}")
@@ -24,12 +25,20 @@ def init_overlay():
 def init_landmarks():
     global dir_path
     global combobox_var
-    if dir_path != "" and combobox_var.get() != "Select amount of landmarks":
+
+    e = None
+    if dir_path != "" and combobox_var.get() != "Select amount of landmarks" and not checkbox_var.get():
         e = model.init_landmarks(dir_path, int(combobox_var.get()))
-        if e is not None:
-            messagebox.showerror("Error", f"Make sure all images are '.JPG' or '.JPEG'.\nAlso make sure number of landmarks is set.\n\n{e}")
+        
+    
+    elif dir_path != "" and checkbox_var.get() and ml_model != "":
+        e = model.predict_new_landmarks(ml_model, dir_path)
+
     else:
         messagebox.showerror("Error", "Select a folder, and the amount of landmarks to place.")
+    
+    if e is not None:
+            messagebox.showerror("Error", f"Make sure all images are '.JPG' or '.JPEG'.\nAlso make sure number of landmarks is set.\n\n{e}")
 
 def init_training():
     global xml_train
