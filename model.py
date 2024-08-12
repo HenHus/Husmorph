@@ -1,5 +1,5 @@
 from tkinter import filedialog
-from Utils import CoordinateOverlay, LandmarkClass, ShapePredictorTrainer, predict_landmarks, XMLtoCSVConverter, DatasetSplitter
+from Utils import CoordinateOverlay, LandmarkClass, ShapePredictorTrainer, predict_landmarks, XMLtoCSVConverter
 
 def getHomePageText1():
     return """
@@ -63,13 +63,6 @@ def init_training(xml_file, threads, n_trials):
         trainer.parallel_optuna(n_trials)
     except Exception as e:
         print(e)
-
-def init_splitting(folder):
-    try:
-        splitter = DatasetSplitter(folder)
-        splitter.split_dataset()
-    except Exception as e:
-        return e
 
 def init_export(xml):
     try:
