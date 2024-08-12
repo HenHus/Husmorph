@@ -100,22 +100,10 @@ def open_XML_train():
     xml_train = file_path
     machinelearning_train_label.configure(text=xml_train)
 
-    # x.delete(1.0, "end")
-    # x.insert("1.0", xml)
-
-# def open_XML_test():
-#     file_path = model.open_file()
-#     global xml_test
-#     xml_test = file_path
-#     machinelearning_test_label.configure(text=xml_test)
-
-    # x.delete(1.0, "end")
-    # x.insert("1.0", xml) 
-
 def ml_slider(value):
     slider_value_label.configure(text=f"Trials: {int(value)}")
 
-
+# GUI
 root = ctk.CTk()
 root.geometry("800x600")
 root.resizable(False, False)
@@ -263,15 +251,6 @@ button_opentraining.grid(row=1, column=1, columnspan=3)
 
 machinelearning_train_label = ctk.CTkLabel(machinelearning_frame, text='XML path will show here...', font=ctk.CTkFont(size=14, slant="italic"), wraplength=250)
 machinelearning_train_label.grid(row=1, column=3, pady=0, columnspan=2)
-
-# button_opentesting = ctk.CTkButton(machinelearning_frame, text="Select testing XML", command=open_XML_test, height=70, width=180, border_color="yellow", border_width=1, font=ctk.CTkFont(size=16), corner_radius=20)
-# button_opentesting.grid(row=2, column=1, columnspan=3)
-
-# machinelearning_test_label = ctk.CTkLabel(machinelearning_frame, text='Test path will show here...', font=ctk.CTkFont(size=14, slant="italic"), wraplength=250)
-# machinelearning_test_label.grid(row=2, column=3, pady=0, columnspan=2)
-
-# machinelearning_split = ctk.CTkButton(machinelearning_frame, text='Split dataset', command=init_splitting, height=70, border_width=1, border_color="yellow", font=ctk.CTkFont(size=16), corner_radius=20)
-# machinelearning_split.grid(row=1, column=0, columnspan=2)
 
 threads = ctk.StringVar(value="Threads to use")
 ml_combobox = ctk.CTkComboBox(master=machinelearning_frame, state="readonly", values=[str(i) for i in range(1, 25)], variable=threads, width=400, font=ctk.CTkFont(size=14))

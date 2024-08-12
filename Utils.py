@@ -17,6 +17,11 @@ import shutil
 import random
 
 class LandmarkClass:
+
+
+    # Class to create landmarks on images
+
+
     def __init__(self, image_folder, landmarks):
         self.landmarks = landmarks
         self.image_folder = image_folder
@@ -26,7 +31,7 @@ class LandmarkClass:
         self.current_image_index = 0
         self.current_image_name = ""
 
-        # Start with the first image
+        
         self.load_next_image()
 
     def create_output_xml_path(self, image_folder):
@@ -37,77 +42,79 @@ class LandmarkClass:
         if self.current_image_index < len(self.image_paths):
             self.image_path = self.image_paths[self.current_image_index]
 
-            # Read the image
+            
             self.image = cv2.imread(self.image_path)
 
-            # Initialize landmarks for the new image
+            
             self.current_image_name = os.path.basename(self.image_path)
             if self.current_image_name not in self.landmarks_data:
                 self.landmarks_data[self.current_image_name] = []
 
-            # Display the image
+            
             self.show_image()
+
         else:
-            # Save the XML file after processing all images
             self.save_xml(self.output_xml_path)
 
     def show_image(self):
-        # Create a figure and display the image
+        
         self.fig, self.ax = plt.subplots(figsize=(12, 8))
         self.ax.imshow(cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB))
 
-        # Connect the mouse click event to the callback function
+        
         self.cid = self.fig.canvas.mpl_connect('button_press_event', self.on_click)
 
-        # Connect the close event to the callback function
+        
         self.fig.canvas.mpl_connect('close_event', self.on_close)
 
-        # Connect the key press event to skip the image on Tab press
+        
         self.kid = self.fig.canvas.mpl_connect('key_press_event', self.on_key_press)
 
-        # Show the plot
+        
         plt.show()
 
     def on_click(self, event):
-        # Check if the click is within the image boundaries
+
+        # To prevent clicking outside the image
         if event.inaxes != self.ax:
             return
 
-        # Get the coordinates of the click
+        
         x, y = int(event.xdata), int(event.ydata)
 
-        # Get the image name
+        
         image_name = os.path.basename(self.image_path)
         if image_name not in self.landmarks_data:
             self.landmarks_data[image_name] = []
 
-        # Right-click to undo the last point
+        # Right-click deletes last point
         if event.button == 3 and len(self.landmarks_data[image_name]) > 0:
             if len(self.landmarks_data[image_name]) == self.landmarks:
                 self.fig.canvas.mpl_disconnect(self.cid)
 
             self.landmarks_data[image_name].pop()
-            self.redraw_image()
+            self.update_image()
             return
 
-        # Left-click to add a point or move to the next image
+        # Left-click adds a point or moves to the next image
         if event.button == 1:
             if len(self.landmarks_data[image_name]) < self.landmarks:
                 self.landmarks_data[image_name].append((x, y))
 
-                # Draw a blue point at the clicked location
-                self.redraw_image()
+                
+                self.update_image()
 
             if len(self.landmarks_data[image_name]) == self.landmarks:
-                # Allow one more click to move to the next image
+                
                 self.cid = self.fig.canvas.mpl_connect('button_press_event', self.load_next_on_click)
 
     def load_next_on_click(self, event):
-        # Only move to the next image if the click is within the image boundaries
+
+        # To prevent clicking outside the image
         if event.inaxes != self.ax:
             return
 
-        # Any left-click after placing the required points will load the next image
+        
         if event.button == 1:
             self.fig.canvas.mpl_disconnect(self.cid)
             self.fig.canvas.mpl_disconnect(self.kid)
@@ -116,19 +123,24 @@ class LandmarkClass:
             self.load_next_image()
 
     def on_key_press(self, event):
-        # Skip the image if Tab is pressed
+
+        # Feature for skipping an image
+
         if event.key == 'tab':
             self.fig.canvas.mpl_disconnect(self.cid)
             self.fig.canvas.mpl_disconnect(self.kid)
             plt.close(self.fig)
-            # Remove the current image data if it exists
+            
+
             if self.current_image_name in self.landmarks_data:
                 del self.landmarks_data[self.current_image_name]
             self.current_image_index += 1
             self.load_next_image()
 
-    def redraw_image(self):
-        # Redraw the image with the current points
+    def update_image(self):
+
+        # Redrawing the image with the current points, either less or more landmarks
+
         self.ax.clear()
         self.ax.imshow(cv2.cvtColor(cv2.imread(self.image_path), cv2.COLOR_BGR2RGB))
         image_name = os.path.basename(self.image_path)
@@ -138,11 +150,13 @@ class LandmarkClass:
         plt.draw()
 
     def on_close(self, event):
-        # Save the XML file when the window is closed
+        
         self.save_xml(self.output_xml_path)
 
     def save_xml(self, xml_path):
-        # Create XML structure
+
+        # XML format
+
         root = ET.Element("dataset")
 
         name_elem = ET.SubElement(root, "name")
@@ -159,7 +173,7 @@ class LandmarkClass:
             for idx, point in enumerate(landmarks):
                 part_elem = ET.SubElement(box_elem, "part", name=str(idx), x=str(point[0]), y=str(point[1]))
 
-        # Create an ElementTree object and write to XML file
+        
         tree = ET.ElementTree(root)
         tree.write(xml_path, xml_declaration=True, encoding='utf-8')
 
@@ -167,6 +181,15 @@ class LandmarkClass:
 
 
 class CoordinateOverlay:
+
+    '''
+        Class to view coordinates on images
+    
+        Its necessary to have the images in the same directory as the XML file,
+        or have the correct path in the XML file to the images.
+        
+    '''
+
     def __init__(self, xml_file, images_directory=""):
         self.xml_file = xml_file
         self.images_directory = images_directory
@@ -198,7 +221,7 @@ class CoordinateOverlay:
         return coordinates
 
     def overlay_coordinates(self, image_path, coordinates):
-        # Read the image
+        
         image = cv2.imread(image_path)
 
         if image is None:
@@ -209,50 +232,46 @@ class CoordinateOverlay:
         original_height, original_width = image.shape[:2]
 
         # Desired image size (adjust as needed)
+        # This only scales to fit the image on the screen, and make it a better viewable experience
         target_size = (1800, 1200)
         scale_width = target_size[0] / original_width
         scale_height = target_size[1] / original_height
 
-        # Resize the image
+        # Resizing the image and the coordinates
         image = cv2.resize(image, target_size, interpolation=cv2.INTER_LINEAR)
 
-        # Process and scale coordinates, then draw them on the image
         for coord_set in coordinates:
             xmin, ymin, xmax, ymax = coord_set[0]
-            # Scale the coordinates
+            
             xmin = int(xmin * scale_width)
             ymin = int(ymin * scale_height)
             xmax = int(xmax * scale_width)
             ymax = int(ymax * scale_height)
 
-            # Draw a rectangle
-            cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (0, 255, 0), 4)  # Thick green rectangle box
-
-            # Draw circles for each part
+            cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (0, 255, 0), 4) # Rectangle box (green)
+            
             for x, y in coord_set[1]:
-                # Scale the part coordinates
+                
                 x = int(x * scale_width)
                 y = int(y * scale_height)
+
                 cv2.circle(image, (x, y), 5, (255, 0, 0), -1)  # Blue circles
 
-        # Create a named window, move it, and resize it
-        cv2.namedWindow('Image with Coordinates', cv2.WINDOW_NORMAL)
-        cv2.moveWindow('Image with Coordinates', 0, 0)
-        cv2.resizeWindow('Image with Coordinates', target_size[0], target_size[1])
+        cv2.namedWindow('Image with Landmarks', cv2.WINDOW_NORMAL)
+        cv2.moveWindow('Image with Landmarks', 0, 0)
+        cv2.resizeWindow('Image with Landmarks', target_size[0], target_size[1])
 
-        # Show the image
-        cv2.imshow('Image with Coordinates', image)
+        
+        cv2.imshow('Image with Landmarks', image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
     def process_images(self):
         for coord_set in self.coordinates:
             image_path = os.path.join(self.images_directory, coord_set[2])
-            print(f"Attempting to read image at path: {image_path}")
+            print(f"Viewing: {image_path}")
             self.overlay_coordinates(image_path, [coord_set])
 
-class StopOptimization(Exception):
-    pass
 
 class ShapePredictorTrainer:
     def __init__(self, xml_file, threads=6, k_folds=5):
@@ -306,6 +325,13 @@ class ShapePredictorTrainer:
             return float('inf'), None
 
     def run_trial(self, trial):
+        '''
+        Parameters to optimize:
+
+        The study will look for the best parameters within the given ranges.
+        
+        '''
+
         options = dlib.shape_predictor_training_options()
         options.nu = trial.suggest_float('nu', 0.06, 0.24)
         options.num_trees_per_cascade_level = trial.suggest_int('num_trees', 300, 1000, log=True)
@@ -365,14 +391,14 @@ class ShapePredictorTrainer:
                         for file in glob.glob('*.dat'):
                             if f'{best_avg_val_error}' in file:
                                 os.remove(file)
-                                # print(f'Removed file: {file}')
+                                
                     best_avg_val_error = trial.value
                     best_model_filename = f'model_{best_avg_val_error:.3f}.dat'
                 else:
                     for file in glob.glob('*.dat'):
                             if f'{trial.value}' in file:
                                 os.remove(file)
-                                # print(f'Removed file: {file}')
+                                
 
             if best_model_filename:
                 print(f"Best model saved as {best_model_filename} with avg validation deviation: {best_avg_val_error}")
@@ -406,7 +432,7 @@ def predict_landmarks(predictor_name, images, ignore=None):
             image_e = ET.Element('image')
             image_e.set('file', str(f))
 
-            # Assuming a single face in the image covering the whole image
+            
             e = dlib.rectangle(left=1, top=1, right=img.shape[1]-1, bottom=img.shape[0]-1)
             shape = predictor(img, e)
             box = ET.Element('box')
@@ -427,7 +453,7 @@ def predict_landmarks(predictor_name, images, ignore=None):
             image_e.append(box)
             images_e.append(image_e)
 
-    # Generate the output file name based on the image folder
+    
     folder_name = os.path.basename(images)
     out_file = f"{folder_name}_output.xml"
 
@@ -438,6 +464,11 @@ def predict_landmarks(predictor_name, images, ignore=None):
 
 
 class XMLtoCSVConverter:
+
+    '''
+        Export class to convert XML files to CSV files.
+        More will be added to this class in the future.
+    '''
     def __init__(self, xml_file, csv_file="data.csv"):
         self.xml_file = xml_file
         self.csv_file = csv_file
@@ -451,7 +482,7 @@ class XMLtoCSVConverter:
     def extract_data(self):
         for image in self.root.findall('.//image'):
             file_path = image.get('file')
-            image_name = file_path.split('/')[-1].split('.')[0]  # Extract the image name without extension
+            image_name = file_path.split('/')[-1].split('.')[0]
 
             row = [image_name]
 
@@ -472,13 +503,13 @@ class XMLtoCSVConverter:
     def create_dataframe(self):
         self.df = pd.DataFrame(self.data)
 
-        # Generate column names
+        
         columns = ['image']
         for i in range(1, self.max_parts + 1):
             columns.append(f'x{i}')
             columns.append(f'y{i}')
 
-        # Rename the columns
+        
         self.df.columns = columns
 
     def save_to_csv(self):
@@ -492,15 +523,27 @@ class XMLtoCSVConverter:
 
     def calculate_metrics(self):
         def polygon_area(x, y):
-            """Calculates the area of a polygon using the Shoelace formula."""
+
+            """
+            Calculating the area of a polygon using the Shoelace formula.
+            """
+
             return 0.5 * abs(sum(x[i] * y[i - 1] - y[i] * x[i - 1] for i in range(len(x))))
 
         def distance(x1, y1, x2, y2):
-            """Calculates the Euclidean distance between two points."""
+
+            """
+            Calculates the Euclidean distance between two points.
+            """
+
             return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
         def polygon_perimeter(x, y):
-            """Calculates the perimeter (outline length) of a polygon."""
+
+            """
+            Calculates the perimeter (outline length) of a polygon.
+            """
+
             return sum(distance(x[i], y[i], x[i - 1], y[i - 1]) for i in range(len(x)))
 
         areas = []
@@ -511,12 +554,12 @@ class XMLtoCSVConverter:
             x_coords = [float(row[f'x{i}']) for i in range(1, self.max_parts + 1) if pd.notna(row[f'x{i}'])]
             y_coords = [float(row[f'y{i}']) for i in range(1, self.max_parts + 1) if pd.notna(row[f'y{i}'])]
 
-            if len(x_coords) == 2:  # Only 2 points, calculate the length
+            if len(x_coords) == 2:  # For only 2 points, calculate the length
                 length = distance(x_coords[0], y_coords[0], x_coords[1], y_coords[1])
                 areas.append(None)
                 perimeters.append(None)
                 lengths.append(length)
-            elif len(x_coords) > 2:  # More than 2 points, calculate area and perimeter
+            elif len(x_coords) > 2:  # For more than 2 points, calculate area AND perimeter
                 area = polygon_area(x_coords, y_coords)
                 perimeter = polygon_perimeter(x_coords, y_coords)
                 areas.append(area)
@@ -533,36 +576,3 @@ class XMLtoCSVConverter:
 
     def save_to_csv_with_metrics(self):
         self.df.to_csv("data_with_metrics.csv", index=False)
-
-
-class DatasetSplitter:
-    def __init__(self, input_folder: str, train_ratio: float = 0.8):
-        self.input_folder = input_folder
-        self.train_ratio = train_ratio
-        self.train_folder = os.path.join(os.getcwd(), "train")
-        self.test_folder = os.path.join(os.getcwd(), "test")
-
-    def create_folders(self) -> None:
-        os.makedirs(self.train_folder, exist_ok=True)
-        os.makedirs(self.test_folder, exist_ok=True)
-
-    def get_all_files(self) -> list:
-        source_folder = os.path.join(os.getcwd(), self.input_folder)
-        return [f for f in os.listdir(source_folder) if os.path.isfile(os.path.join(source_folder, f))]
-
-    def split_files(self, all_files: list) -> tuple:
-        random.shuffle(all_files)
-        split_index = int(len(all_files) * self.train_ratio)
-        return all_files[:split_index], all_files[split_index:]
-
-    def copy_files(self, files: list, destination_folder: str) -> None:
-        source_folder = os.path.join(os.getcwd(), self.input_folder)
-        for file in files:
-            shutil.copy2(os.path.join(source_folder, file), os.path.join(destination_folder, file))
-
-    def split_dataset(self) -> None:
-        self.create_folders()
-        all_files = self.get_all_files()
-        train_files, test_files = self.split_files(all_files)
-        self.copy_files(train_files, self.train_folder)
-        self.copy_files(test_files, self.test_folder)
