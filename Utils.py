@@ -7,7 +7,6 @@ import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
 import dlib
 import optuna
-from joblib import Parallel, delayed
 from sklearn.model_selection import KFold
 from xml.dom import minidom
 import glob
