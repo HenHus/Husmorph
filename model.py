@@ -28,7 +28,7 @@ def getMLText1():
     return "Here, you can train a model to predict landmarks on images.\n\n\nStart by selecting a training and testing dataset."
 
 def getMessageBoxText1():
-    return "It seems like the initializing went well, and the training is about to start. This will most likely crash the application while training.\nThe training progress can be followed in the terminal. Good luck!"
+    return "It seems like the initializing went well, and the training is about to start. This will most likely crash the application while training.\nThe training progress can be followed in the terminal. Good luck!\nTo stop manually, press 'control' + 'c' in the terminal window."
 
 def open_file():
     file = filedialog.askopenfilename()
@@ -57,9 +57,9 @@ def predict_new_landmarks(ml_model, images):
     except Exception as e:
         return e
 
-def init_training(xml_file, threads, n_trials):
+def init_training(xml_file, path, threads, n_trials):
     try:
-        trainer = ShapePredictorTrainer(xml_file=xml_file, threads=threads)
+        trainer = ShapePredictorTrainer(xml_file=xml_file, base_path=path, threads=threads)
         trainer.parallel_optuna(n_trials)
     except Exception as e:
         print(e)

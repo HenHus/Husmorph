@@ -14,6 +14,8 @@ import pandas as pd
 import math
 import shutil
 import random
+import matplotlib
+matplotlib.use("TkAgg")
 
 class LandmarkClass:
 
@@ -34,8 +36,12 @@ class LandmarkClass:
         self.load_next_image()
 
     def create_output_xml_path(self, image_folder):
+        parent_directory = os.path.dirname(os.path.normpath(image_folder))
+        # Use the image folder's name to name the output file
         folder_name = os.path.basename(os.path.normpath(image_folder))
-        return os.path.join(os.getcwd(), f"{folder_name}.xml")
+        # Create the path for the XML file in the parent directory
+        return os.path.join(parent_directory, f"{folder_name}.xml")
+
 
     def load_next_image(self):
         if self.current_image_index < len(self.image_paths):
@@ -56,20 +62,26 @@ class LandmarkClass:
             self.save_xml(self.output_xml_path)
 
     def show_image(self):
-        
+        # Add counter text to the image
+        counter_text = f"Image {self.current_image_index + 1}/{len(self.image_paths)}"
+        annotated_image = self.image.copy()
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        font_scale = 1
+        font_thickness = 2
+        text_size = cv2.getTextSize(counter_text, font, font_scale, font_thickness)[0]
+        text_x = 10  # 10 pixels from the left
+        text_y = text_size[1] + 10  # 10 pixels from the top
+        cv2.putText(annotated_image, counter_text, (text_x, text_y), font, font_scale, (0, 255, 0), font_thickness)
+
+        # Show the image in a matplotlib window
         self.fig, self.ax = plt.subplots(figsize=(12, 8))
-        self.ax.imshow(cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB))
+        self.ax.imshow(cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB))
 
-        
+        # Connect events for user interactions
         self.cid = self.fig.canvas.mpl_connect('button_press_event', self.on_click)
-
-        
         self.fig.canvas.mpl_connect('close_event', self.on_close)
-
-        
         self.kid = self.fig.canvas.mpl_connect('key_press_event', self.on_key_press)
 
-        
         plt.show()
 
     def on_click(self, event):
@@ -153,19 +165,23 @@ class LandmarkClass:
         self.save_xml(self.output_xml_path)
 
     def save_xml(self, xml_path):
-
         # XML format
-
         root = ET.Element("dataset")
 
         name_elem = ET.SubElement(root, "name")
+        name_elem.text = "Image Dataset"
+
         comment_elem = ET.SubElement(root, "comment")
+        comment_elem.text = "This dataset contains images with landmarks."
 
         images_elem = ET.SubElement(root, "images")
 
         for image_name, landmarks in self.landmarks_data.items():
-            image_elem = ET.SubElement(images_elem, "image", file=os.path.relpath(os.path.join(self.image_folder, image_name), os.path.dirname(self.image_folder)))
+            # Use absolute path for the image
+            full_image_path = os.path.abspath(os.path.join(self.image_folder, image_name))
+            image_elem = ET.SubElement(images_elem, "image", file=full_image_path)
 
+            # Assuming self.image is a numpy array or similar structure with shape
             height, width, _ = self.image.shape
             box_elem = ET.SubElement(image_elem, "box", top='1', left='1', width=str(width-1), height=str(height-1))
 
@@ -273,11 +289,15 @@ class CoordinateOverlay:
 
 
 class ShapePredictorTrainer:
-    def __init__(self, xml_file, threads=6, k_folds=5):
+    def __init__(self, xml_file, base_path, threads=6, k_folds=5):
         self.xml_file = xml_file
+        self.base_path = base_path
         self.k_folds = k_folds
         self.threads = threads
         self.images = self.parse_xml(xml_file)
+
+        # Ensure the base path exists
+        os.makedirs(base_path, exist_ok=True)
 
     @staticmethod
     def parse_xml(xml_file):
@@ -286,8 +306,7 @@ class ShapePredictorTrainer:
         images = root.findall('.//image')
         return images
 
-    @staticmethod
-    def save_to_xml(images, xml_file):
+    def save_to_xml(self, images, xml_file):
         root = ET.Element("dataset")
         name = ET.SubElement(root, "name")
         comment = ET.SubElement(root, "comment")
@@ -299,12 +318,16 @@ class ShapePredictorTrainer:
 
     def train_and_test(self, train_images, val_images, options):
         try:
-            train_path = 'temp_train.xml'
-            val_path = 'temp_val.xml'
+            # Define paths relative to the base path
+            train_path = os.path.join(self.base_path, 'temp_train.xml')
+            val_path = os.path.join(self.base_path, 'temp_val.xml')
+            model_filename = os.path.join(self.base_path, 'temp_model.dat')
+
+            # Save the train and validation images
             self.save_to_xml(train_images, train_path)
             self.save_to_xml(val_images, val_path)
-            
-            model_filename = 'temp_model.dat'
+
+            # Train and test
             dlib.train_shape_predictor(train_path, model_filename, options)
             training_deviation = dlib.test_shape_predictor(train_path, model_filename)
             print(f"Training error: {training_deviation}")
@@ -312,7 +335,10 @@ class ShapePredictorTrainer:
             testing_deviation = dlib.test_shape_predictor(val_path, model_filename)
             print(f"Validation error: {testing_deviation}")
 
-            new_model_filename = model_filename.split(".")[0] + f"_{testing_deviation:.3f}.dat"
+            # Rename model file to include testing deviation
+            new_model_filename = os.path.join(
+                self.base_path, f"model_{testing_deviation}.dat"
+            )
             os.rename(model_filename, new_model_filename)
 
             return testing_deviation, new_model_filename
@@ -342,16 +368,19 @@ class ShapePredictorTrainer:
         options.lambda_param = trial.suggest_float('lambda_param', 0.04, 0.14)
         options.feature_pool_region_padding = trial.suggest_float('feature_pool_region_padding', -0.5, 1.5)
         options.num_threads = self.threads
-        options.be_verbose = True
+        options.be_verbose = False
 
         kfold = KFold(n_splits=self.k_folds)
         val_errors = []
         temp_model_files = []
         best_model = ""
+        counter = 0
 
         for _, (train_index, val_index) in enumerate(kfold.split(self.images)):
+            counter += 1
             train_images = [self.images[i] for i in train_index]
             val_images = [self.images[i] for i in val_index]
+            print(f"Starting cross-validation training number {counter} out of 5")
             val_error, model_filename = self.train_and_test(train_images, val_images, options)
             val_errors.append(val_error)
             if model_filename:
@@ -366,14 +395,19 @@ class ShapePredictorTrainer:
                     if os.path.exists(model_filename):
                         os.remove(model_filename)
                 else:
-                    os.rename(model_filename, f'model_{val:.3f}_{avg_val_error}.dat')
+                    os.rename(model_filename, os.path.join(self.base_path, f'model_{val}_{avg_val_error}.dat'))
         else:
             best_model_filename = None
 
         return avg_val_error, best_model_filename
 
     def parallel_optuna(self, n_trials):
+        global trials_counter
+        trials_counter = 0
         def objective(trial):
+            global trials_counter
+            trials_counter += 1
+            print(f"Running trial number {trials_counter} out of {n_trials}")
             avg_val_error, best_model_filename = self.run_trial(trial)
             return avg_val_error
 
@@ -383,28 +417,35 @@ class ShapePredictorTrainer:
 
         try:
             study.optimize(objective, n_trials=n_trials)
-            
+
             for trial in study.trials:
+                trial_model_files = glob.glob(os.path.join(self.base_path, '*.dat'))
                 if trial.value < best_avg_val_error:
+                    # Remove the previous best model if it exists
                     if best_model_filename:
-                        for file in glob.glob('*.dat'):
+                        for file in trial_model_files:
                             if f'{best_avg_val_error}' in file:
                                 os.remove(file)
-                                
+
+                    # Update the best model
                     best_avg_val_error = trial.value
-                    best_model_filename = f'model_{best_avg_val_error:.3f}.dat'
+                    best_model_filename = os.path.join(
+                        self.base_path, f'model_{best_avg_val_error}.dat'
+                    )
                 else:
-                    for file in glob.glob('*.dat'):
-                            if f'{trial.value}' in file:
-                                os.remove(file)
-                                
+                    # Remove models from non-optimal trials
+                    for file in trial_model_files:
+                        if f'{trial.value}' in file:
+                            os.remove(file)
 
             if best_model_filename:
                 print(f"Best model saved as {best_model_filename} with avg validation deviation: {best_avg_val_error}")
-            
-            optuna.visualization.plot_optimization_history(study).show()
-            optuna.visualization.plot_slice(study).show()
-            optuna.visualization.plot_param_importances(study).show()
+
+            # Optional: Visualization (if necessary)
+            # optuna.visualization.plot_optimization_history(study).show()
+            # optuna.visualization.plot_slice(study).show()
+            # optuna.visualization.plot_param_importances(study).show()
+
         except optuna.exceptions.TrialPruned:
             pass  # Ignore pruned trials
 
@@ -412,6 +453,7 @@ class ShapePredictorTrainer:
         print(study.best_params)
         print("Best average validation deviation:")
         print(study.best_value)
+
 
 
 

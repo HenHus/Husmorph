@@ -1,6 +1,6 @@
 *As of now, the code is not cleaned up, but it's working so I decided to upload the tool anyways. Enjoy :)*
 
-*This README file is also under construction and will be updated.*
+*This README file is also under construction and will be updated It's slightly outdated unfortunately, but will be updated ass soon as I can.*
 
 # HUSMORPH
 
@@ -16,23 +16,23 @@ Then, in a python terminal window, use the following command line to install the
 
 *This has to be done after the tool is downloaded, and the terminal needs to be opened at the same path as the tool.*
 
-To open the graphical user interface, just run the Main.py file. This could be done in different ways. One way is to open the whole folder in [VS code](https://code.visualstudio.com) (similar to R studio) and run the script from there, or run directly from the terminal (in the folder containing the files). The command for running the script varies slightly, but here is a few that may work for you:
+To open the graphical user interface, just run the Husmorph.py file. This could be done in different ways. One way is to open the whole folder in [VS code](https://code.visualstudio.com) (similar to R studio) and run the script from there, or run directly from the terminal (in the folder containing the files). The command for running the script varies slightly, but here is a few that may work for you:
 
-    python Main.py
-
-or
-
-    py Main.py
+    python Husmorph.py
 
 or
 
-    python3 Main.py
+    py Husmorph.py
+
+or
+
+    python3 Husmorph.py
 
 
 
 # Using the tool
 
-The `Main.py` does everything, the other files should be ignored unless you know what you are doing. All features should also be used through the graphical user interface.
+The `Husmorph.py` does everything, the other files should be ignored unless you know what you are doing. All features should also be used through the graphical user interface.
 
 ## Setting landmarks on images
 
