@@ -1,103 +1,99 @@
-*This README file is also under construction and will be updated. It's slightly outdated unfortunately, but will be updated ass soon as I can.*
-
 # HUSMORPH
 
-Grapichal user interface for landmark placement; both manually and with machine learning
+HUSMORPH is a graphical user interface (GUI) designed for landmark placement on images. It supports both manual placement and automated machine learning-based predictions. This versatile tool can be used right out of the box or by running the scripts provided in this repository for more customized workflows.
+
+## Features
+- Intuitive interface for manual landmark placement on images.
+- Machine learning functionality to predict landmarks automatically.
+- Support for data visualization and exporting results to commonly used formats.
+- Platform compatibility with Windows and macOS.
+
+---
 
 ## Downloads
 
-All links go to my personal Google Drive, where the application can be downloaded with the links underneath
+You can download the application using the links below. The files are hosted on my personal Google Drive for easy access. The files were too big for GitHub.
 
 ### Windows
-
-Downloadable zip file. extract, and run the Husmorph-application in the folder
+- **File:** Downloadable ZIP archive.
+- **Instructions:** Extract the archive, and run the `Husmorph` executable from the folder.
 
 **[Download here](https://drive.google.com/file/d/1x2jKShA6XEmhQ8qEhal-tT8Lezb_mlGt/view?usp=sharing)**
 
-### Mac
+---
 
-Download the dmg-file, drag the application into the applications folder, and open the app from the applications folder on your computer
+### macOS
+- **File:** DMG installer.
+- **Instructions:** Download the file, drag the application to your `Applications` folder, and launch `Husmorph` from there.
 
 **[Download here](https://drive.google.com/file/d/1yvK3VLfriQuCP9vrRXdg7nFu8jgk0Bge/view?usp=sharing)**
 
+---
 
-# Using the tool
+## Using the Tool
 
+### Setting Landmarks on Images
 
-## Setting landmarks on images
+1. Click **Set landmarks on images** to open the landmark placement window.
+2. **Image Requirements:**
+   - Images can have any resolution, but all images in the folder must share the same resolution.
+   - For machine learning purposes, ensure the resolution is 2,000,000 pixels or lower (e.g., around 1920x1080).
+3. Select the folder containing your images. The selected folder path will be displayed.
+4. Specify the number of landmarks to place on each image.
+5. Ensure the "Use the selected model" option is **unchecked**, then click **Place landmarks**.
 
-By pressing **Set landmarks on images**, another window pops up. In the window you would start by selecting the image folder that you have.
+#### Landmark Placement Workflow
+- A new window will open, displaying each image in your selected folder one at a time.
+- **Controls:**
+  1. **Left-click** to place a landmark.
+  2. **Right-click** to delete the last placed landmark.
+  3. Once all landmarks are placed for an image, **left-click** to proceed to the next image.
+  4. To skip an image, press **Tab**.
+- After processing all images, the window will close automatically, and the data will be saved to an XML file in the same parent folder as your images.
 
+---
 
-The images can be any resolution, but all the images should be the same resolution. If the images are going to be used for machine learning, keep the resolution at 2 000 000 pixels or lower (around 1920x1080).
+### Visualizing Landmarks
 
-The selected folder will appear in the box.
+- Open the XML file containing the landmark data you want to view.
+- Ensure the original image folder remains in its original location (the images must be accessible for visualization). The XML file references the images by their original path, so if the images are moved, the landmarks cannot be overlaid correctly.
+- Use **Spacebar** to navigate through the images while viewing their landmarks.
 
-Select how many landmarks you want on each image from the menu.
+---
 
-Once these 2 things are selected, you can go ahead and **place landmarks**. Make sure that the 'Use the selected model' option is **not** selected.
+### Machine Learning
 
-Another pop-up window will be opened, and all the images in the folder you selected will be displayed one at the time.
+Husmorph includes a built-in machine learning pipeline to predict landmarks automatically. To use this functionality, you first need to train the model on your dataset, enabling it to make accurate predictions for landmark placement in future images.
 
-1. **Left click** on the image to place a landmark
-2. **Right click** anywhere on the image to delete the last placed landmark
-3. Once you have placed the number of landmarks you selected in the graphical interface, simply **left click** anywhere on the image to go to the next image
-4. If you want to skip an image (for some reason), you can press **tab** to go straight to the next image and skip the current one.
+#### Training a Model
+1. Select an XML file containing landmark data for training.
+2. Set the number of *threads* your computer should use.
+   - **Note:** The program auto-detects your computer's capabilities, and estimates how many threads you should use
+   - **General recommendation:** Save 1–2 threads for system processes. For a typical laptop, use ~5 threads.
+3. Specify the number of *trials* for parameter optimization.
+   - More trials increase the likelihood of finding the optimal model but also increase training time.
 
-Once all images have been processed, the pop-up will automatically close, and all the data is saved to a XML file in this folder.
+   > **Analogy:** Think of a rifle shooter improving over time. Each trial fine-tunes the shooter’s accuracy, increasing the likelihood of hitting the target center.
+4. Choose the folder where the trained model will be saved. During training, this folder will temporarily store intermediate files. The best model from each trial (based on cross-validation) is saved in this folder. The filenames indicate the mean deviation from cross-validation, allowing to compare trials fairly and monitor performance.
 
+5. Once training is complete, the model can be used in the **Set landmarks on images** tab. Remember to:
+   - Select a new set of images
+   - Select the created model
+   - Use images with the same resolution as those used for training
 
-## Visualizing landmarks
+---
 
-Simply open the XML file that you want.
+### Exporting Data
 
-*Note that the image folder itself can't be removed. It still has to stay where it is in order to display the landmarks.*
+Currently, we only support exporting landmark data from XML to CSV format. Support for additional formats is planned for future updates.
 
-Press **space** to go through the images.
+---
 
-## Machine learning
+## Notes and Best Practices
+- Always use consistent image resolutions within a dataset, especially when using machine learning models.
+- Keep the original image folder intact if you plan to visualize landmarks later.
+- For optimal machine learning performance, balance the number of trials and threads based on your system's capabilities. For good performance, we recommend at least 200 images.
 
-Select the XML file that contains the landmarks you want to predict in the future using machine learning.
+---
 
-You have to select how many *threads* you want your computer to use. The more the threads, the faster the training goes. However I recommend saving at least one or two threads from your computer's total threads.
-
-*If you don't know how many threads you computer has, go with around 5 threads on a regular laptop that it not that old.*
-
-Select how many *trials* you would like to have. A *trial* is a set of parameters used to find the best parameters for your dataset. The more trials, the higher the success to find the best possible machine learning model for you. However, twice as many trials also means twice as long time to complete the training.
-
-*Imagine a rifle shooter. He might perform okay in the start, but if you give him some time to train, he will overall get better and better. At one point he might also hit the perfect shot in the center of the target.*
-
-Once a model is created, you can try to predict landmarks in the '**Set landmarks on images**' - tab in the interface, and select the model that were created. Also remember to select the folder of images to predict landmarks on.
-
-**Make sure the images for prediction has the same resolution as the images used to train the model.**
-
-## Exporting
-
-As of now, it's possible to export the XML data to CSV format. Other export formats will be added in the future.
-
-
-## Everything under here is outdated!
-
-
-### Code base
-
-Python is required for this to work, the tool were built with python 3.11.X. And environment like conda is also recommended, but not nessecary ([Anaconda](https://www.anaconda.com/download/success)).
-
-Then, in a python terminal window, use the following command line to install the other necessary modules:
-
-    pip install -r Requirements.txt
-
-*This has to be done after the tool is downloaded, and the terminal needs to be opened at the same path as the tool.*
-
-To open the graphical user interface, just run the Husmorph.py file. This could be done in different ways. One way is to open the whole folder in [VS code](https://code.visualstudio.com) (similar to R studio) and run the script from there, or run directly from the terminal (in the folder containing the files). The command for running the script varies slightly, but here is a few that may work for you:
-
-    python Husmorph.py
-
-or
-
-    py Husmorph.py
-
-or
-
-    python3 Husmorph.py
-
+Feel free to report issues, or suggest new features! This tool is designed to be flexible and useful for researchers and developers alike.
