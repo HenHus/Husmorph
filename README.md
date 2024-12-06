@@ -1,46 +1,33 @@
-*As of now, the code is not cleaned up, but it's working so I decided to upload the tool anyways. Enjoy :)*
-
-*This README file is also under construction and will be updated It's slightly outdated unfortunately, but will be updated ass soon as I can.*
-
-
+*This README file is also under construction and will be updated. It's slightly outdated unfortunately, but will be updated ass soon as I can.*
 
 # HUSMORPH
 
 Grapichal user interface for landmark placement; both manually and with machine learning
 
-## Installation and setup
+## Downloads
 
-Python is required for the tool to work, the tool were built with python 3.11.X. And environment like conda is also recommended, but not nessecary ([Anaconda](https://www.anaconda.com/download/success)).
+All links go to my personal Google Drive, where the application can be downloaded with the links underneath
 
-Then, in a python terminal window, use the following command line to install the other necessary modules:
+### Windows
 
-    pip install -r Requirements.txt
+Downloadable zip file. extract, and run the Husmorph-application in the folder
 
-*This has to be done after the tool is downloaded, and the terminal needs to be opened at the same path as the tool.*
+**[Download here](https://drive.google.com/file/d/1x2jKShA6XEmhQ8qEhal-tT8Lezb_mlGt/view?usp=sharing)**
 
-To open the graphical user interface, just run the Husmorph.py file. This could be done in different ways. One way is to open the whole folder in [VS code](https://code.visualstudio.com) (similar to R studio) and run the script from there, or run directly from the terminal (in the folder containing the files). The command for running the script varies slightly, but here is a few that may work for you:
+### Mac
 
-    python Husmorph.py
+Download the dmg-file, drag the application into the applications folder, and open the app from the applications folder on your computer
 
-or
-
-    py Husmorph.py
-
-or
-
-    python3 Husmorph.py
-
+**[Download here](https://drive.google.com/file/d/1yvK3VLfriQuCP9vrRXdg7nFu8jgk0Bge/view?usp=sharing)**
 
 
 # Using the tool
 
-The `Husmorph.py` does everything, the other files should be ignored unless you know what you are doing. All features should also be used through the graphical user interface.
 
 ## Setting landmarks on images
 
 By pressing **Set landmarks on images**, another window pops up. In the window you would start by selecting the image folder that you have.
 
-**I strongly recommend that the image folder is in the same folder as the rest of these files before you start.**
 
 The images can be any resolution, but all the images should be the same resolution. If the images are going to be used for machine learning, keep the resolution at 2 000 000 pixels or lower (around 1920x1080).
 
@@ -87,3 +74,30 @@ Once a model is created, you can try to predict landmarks in the '**Set landmark
 ## Exporting
 
 As of now, it's possible to export the XML data to CSV format. Other export formats will be added in the future.
+
+
+## Everything under here is outdated!
+
+
+### Code base
+
+Python is required for this to work, the tool were built with python 3.11.X. And environment like conda is also recommended, but not nessecary ([Anaconda](https://www.anaconda.com/download/success)).
+
+Then, in a python terminal window, use the following command line to install the other necessary modules:
+
+    pip install -r Requirements.txt
+
+*This has to be done after the tool is downloaded, and the terminal needs to be opened at the same path as the tool.*
+
+To open the graphical user interface, just run the Husmorph.py file. This could be done in different ways. One way is to open the whole folder in [VS code](https://code.visualstudio.com) (similar to R studio) and run the script from there, or run directly from the terminal (in the folder containing the files). The command for running the script varies slightly, but here is a few that may work for you:
+
+    python Husmorph.py
+
+or
+
+    py Husmorph.py
+
+or
+
+    python3 Husmorph.py
+
