@@ -333,7 +333,7 @@ slider_threads.grid(row=6, column=2, sticky='n')
 slider_threads_label = ctk.CTkLabel(machinelearning_frame, text=f"Threads: {int(slider_threads.get())}", font=ctk.CTkFont(size=12))
 slider_threads_label.grid(row=5, column=2, sticky='s')
 
-slider_trials = ctk.CTkSlider(machinelearning_frame, from_=50, to=200, number_of_steps=30, command=ml_trials)
+slider_trials = ctk.CTkSlider(machinelearning_frame, from_=20, to=200, number_of_steps=36, command=ml_trials)
 slider_trials.set(100)
 slider_trials.grid(row=6, column=3, sticky='n', columnspan=2)
 
