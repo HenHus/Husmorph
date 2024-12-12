@@ -71,7 +71,7 @@ class LandmarkClass:
         text_size = cv2.getTextSize(counter_text, font, font_scale, font_thickness)[0]
         text_x = 10  # 10 pixels from the left
         text_y = text_size[1] + 10  # 10 pixels from the top
-        cv2.putText(annotated_image, counter_text, (text_x, text_y), font, font_scale, (0, 255, 0), font_thickness)
+        cv2.putText(annotated_image, counter_text, (text_x, text_y), font, font_scale, (255, 0, 0), font_thickness)
 
         # Show the image in a matplotlib window
         self.fig, self.ax = plt.subplots(figsize=(12, 8))

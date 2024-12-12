@@ -275,9 +275,9 @@ overlay_XML.grid(row=2, column=0, padx=(80), columnspan=3)
 
 overlay_init_overlay = ctk.CTkButton(overlay_frame, text='Look at landmarks', command=init_overlay, border_width=1, height=70, width=180, border_color="yellow", font=ctk.CTkFont(size=16), corner_radius=20)
 overlay_init_overlay.grid(row=3, column=1, pady=10)
-ToolTip(overlay_init_overlay, "Press 'space' to go through the images. Hold 'space' go fast to the end.")
+ToolTip(overlay_init_overlay, "Press 'space' to go through the images. Press 'c' to cancel.")
 
-overlay_text1 = ctk.CTkLabel(overlay_frame, text="-Make sure the picture folder path corresponds to the XML file (see explaination on this if you are uncertain)\n\n-Press 'space' to scroll through the images", font=ctk.CTkFont(size=13), wraplength=200)
+overlay_text1 = ctk.CTkLabel(overlay_frame, text="-Instructions:\n\n-Make sure the picture folder path corresponds to the XML file (see explaination on this if you are uncertain)\n\n-Press 'space' to scroll through the images\n\n-Press 'c' to cancel", font=ctk.CTkFont(size=13), wraplength=200)
 overlay_text1.grid(row=3, column=2, rowspan=2)
 
 overlay_back = ctk.CTkButton(overlay_frame, text='Back', command=lambda: show_frame(home_frame), border_width=1, border_color="yellow", font=ctk.CTkFont(size=16), height=40, corner_radius=20)

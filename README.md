@@ -22,9 +22,11 @@ You can download the application using the links below. The files are hosted on 
 
 ---
 
-### macOS
+### macOS with silicon chip (M1, M2, M3, M4 models)
 - **File:** DMG installer.
 - **Instructions:** Download the file, drag the application to your `Applications` folder, and launch `Husmorph` from there.
+
+   > **Note:** Mac-users may have to right-click, and then press `open` the first time opening the software to bypass security warnings. Otherwise, it can be found in settings -> security on your computer.
 
 **[Download here](https://drive.google.com/file/d/1yvK3VLfriQuCP9vrRXdg7nFu8jgk0Bge/view?usp=sharing)**
 
@@ -58,7 +60,7 @@ You can download the application using the links below. The files are hosted on 
 - Open the XML file containing the landmark data you want to view.
 - Ensure the original image folder remains in its original location (the images must be accessible for visualization). The XML file references the images by their original path, so if the images are moved, the landmarks cannot be overlaid correctly.
 - Use **Spacebar** to navigate through the images while viewing their landmarks.
-
+- Press `c` to cancel, and go back to the program.
 ---
 
 ### Machine Learning
@@ -76,10 +78,12 @@ Husmorph includes a built-in machine learning pipeline to predict landmarks auto
    > **Analogy:** Think of a rifle shooter improving over time. Each trial fine-tunes the shooter’s accuracy, increasing the likelihood of hitting the target center.
 4. Choose the folder where the trained model will be saved. During training, this folder will temporarily store intermediate files. The best model from each trial (based on cross-validation) is saved in this folder. The filenames indicate the mean deviation from cross-validation, allowing to compare trials fairly and monitor performance.
 
+**Note**: the software becomes unresponsive once training has started.
+
 5. Once training is complete, the model can be used in the **Set landmarks on images** tab. Remember to:
    - Select a new set of images
    - Select the created model
-   - Use images with the same resolution as those used for training
+   - Use images with the same resolution as those used for training for best results
 
 ---
 
