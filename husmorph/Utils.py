@@ -12,8 +12,6 @@ from xml.dom import minidom
 import glob
 import pandas as pd
 import math
-import shutil
-import random
 import matplotlib
 matplotlib.use("TkAgg")
 
@@ -63,19 +61,34 @@ class LandmarkClass:
 
     def show_image(self):
         # Add counter text to the image
-        counter_text = f"Image {self.current_image_index + 1}/{len(self.image_paths)}"
         annotated_image = self.image.copy()
+        height, width, _ = annotated_image.shape
+
+        # Dynamically set counter text position based on image dimensions
+        counter_text = f"Image {self.current_image_index + 1}/{len(self.image_paths)}"
         font = cv2.FONT_HERSHEY_SIMPLEX
-        font_scale = 1
-        font_thickness = 2
+        font_scale = max(1, width // 1000)  # Scale font size with image width
+        font_thickness = max(2, width // 500)  # Scale thickness with image width
         text_size = cv2.getTextSize(counter_text, font, font_scale, font_thickness)[0]
-        text_x = 10  # 10 pixels from the left
-        text_y = text_size[1] + 10  # 10 pixels from the top
+        text_x = int(width * 0.01)  # 1% of the image width from the left
+        text_y = text_size[1] + int(height * 0.01)  # 1% of the image height from the top
         cv2.putText(annotated_image, counter_text, (text_x, text_y), font, font_scale, (255, 0, 0), font_thickness)
 
-        # Show the image in a matplotlib window
-        self.fig, self.ax = plt.subplots(figsize=(12, 8))
+        # Dynamically scale figsize based on image dimensions
+        aspect_ratio = width / height
+        self.fig, self.ax = plt.subplots(figsize=(16, 16 / aspect_ratio))  # Larger and proportional figure size
+
+        # Set window position to upper left corner
+        mngr = plt.get_current_fig_manager()
+        if hasattr(mngr, 'window'):
+            window_x = 0  # Offset from the left edge
+            window_y = 0  # Offset from the top edge
+            mngr.window.wm_geometry(f"+{window_x}+{window_y}")
+
+        # Fill the figure with the image
+        self.ax.set_position([0, 0, 1, 1])  # Remove margins
         self.ax.imshow(cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB))
+        self.ax.axis('off')  # Hide axes for better image display
 
         # Connect events for user interactions
         self.cid = self.fig.canvas.mpl_connect('button_press_event', self.on_click)
@@ -83,6 +96,7 @@ class LandmarkClass:
         self.kid = self.fig.canvas.mpl_connect('key_press_event', self.on_key_press)
 
         plt.show()
+
 
     def on_click(self, event):
 
@@ -149,16 +163,32 @@ class LandmarkClass:
             self.load_next_image()
 
     def update_image(self):
+        # Add counter text to the image
+        annotated_image = self.image.copy()
+        height, width, _ = annotated_image.shape
 
-        # Redrawing the image with the current points, either less or more landmarks
+        # Dynamically set counter text position based on image dimensions
+        counter_text = f"Image {self.current_image_index + 1}/{len(self.image_paths)}"
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        font_scale = max(1, width // 1000)  # Scale font size with image width
+        font_thickness = max(2, width // 500)  # Scale thickness with image width
+        text_size = cv2.getTextSize(counter_text, font, font_scale, font_thickness)[0]
+        text_x = int(width * 0.01)  # 1% of the image width from the left
+        text_y = text_size[1] + int(height * 0.01)  # 1% of the image height from the top
+        cv2.putText(annotated_image, counter_text, (text_x, text_y), font, font_scale, (255, 0, 0), font_thickness)
 
         self.ax.clear()
-        self.ax.imshow(cv2.cvtColor(cv2.imread(self.image_path), cv2.COLOR_BGR2RGB))
-        image_name = os.path.basename(self.image_path)
+        self.ax.set_position([0, 0, 1, 1])  # Ensure the image fills the figure
+        self.ax.imshow(cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB))
+        self.ax.axis('off')  # Hide axes
+
+        # Draw landmarks on the image
+        image_name = self.current_image_name
         for (x, y) in self.landmarks_data[image_name]:
-            cv2.circle(self.image, (x, y), 8, (255, 0, 0), -1)
+            cv2.circle(annotated_image, (x, y), 8, (255, 0, 0), -1)
             self.ax.scatter(x, y, color='blue')
-        plt.draw()
+
+        self.fig.canvas.draw()
 
     def on_close(self, event):
         

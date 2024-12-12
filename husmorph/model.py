@@ -13,10 +13,10 @@ def getHomePageText1():
     
     
 
-    For larger datasets, you can train a model to predict landmarks on images.
+    For larger datasets, you can train a model to predict landmarks on images here:
 
     
-    You can also export landmarks form XML to CSV for further analysis."""
+    You can also export landmarks from XML to CSV for further analysis."""
 
 def getLandmarksPageText1():
     return "Select a folder with images to set landmarks on.\n\nRemember that the folder can only contain '.JPG' or '.JPEG' images."
