@@ -18,7 +18,7 @@ You can download the application using the links below. The files are hosted on 
 - **File:** Downloadable ZIP archive.
 - **Instructions:** Extract the archive, and run the `Husmorph` executable from the folder.
 
-**[Download here](https://drive.google.com/file/d/1x2jKShA6XEmhQ8qEhal-tT8Lezb_mlGt/view?usp=sharing)**
+**[Download here](https://drive.google.com/file/d/1x2jKShA6XEmhQ8qEhal-tT8Lezb_mlGt/view?usp=share_link)**
 
 ---
 
@@ -28,7 +28,7 @@ You can download the application using the links below. The files are hosted on 
 
    > **Note:** Mac-users may have to right-click, and then press `open` the first time opening the software to bypass security warnings. Otherwise, it can be found in settings -> security on your computer.
 
-**[Download here](https://drive.google.com/file/d/1yvK3VLfriQuCP9vrRXdg7nFu8jgk0Bge/view?usp=sharing)**
+**[Download here](https://drive.google.com/file/d/1Weko3YBif2mEi5Uz-tU1BdMo0vcGYBuT/view?usp=share_link)**
 
 ---
 
