@@ -18,7 +18,7 @@ You can download the application using the links below. The files are hosted on 
 - **File:** Downloadable ZIP archive.
 - **Instructions:** Extract the archive, and run the `Husmorph` executable from the folder.
 
-**[Download here](https://drive.google.com/file/d/1x2jKShA6XEmhQ8qEhal-tT8Lezb_mlGt/view?usp=share_link)**
+**[Download here](https://drive.google.com/file/d/1IC0XUQLshbcBHlt7jbdVgdt0UKDWJ3I_/view?usp=drivesdk)**
 
 ---
 
