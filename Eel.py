@@ -117,4 +117,4 @@ def save_xml_edit(landmarks, image_dims, xml_file_path):
     tree.write(xml_file_path, xml_declaration=True, encoding="utf-8")
     return f"Landmarks saved to {xml_file_path}"
 
-eel.start('new_index.html', size=(1024, 768))
+eel.start('index.html', size=(1024, 768))

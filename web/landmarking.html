@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Landmark Annotation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Image Landmark Annotation Tool</h2>
+  <div id="folderSelection">
+    <button id="selectFolderButton">Select Image Folder</button>
+    <span id="folderPath"></span>
+    <button id="selectSaveFolderButton">Select Save Folder</button>
+    <span id="saveFolderPath"></span>
+    <button id="loadXMLButton">Load XML</button>
+  </div>
+  <div id="container">
+    <canvas id="imageCanvas"></canvas>
+  </div>
+  <div id="controls">
+    <button id="prevButton">Previous Image</button>
+    <button id="skipButton">Skip Image</button>
+    <button id="nextButton">Next Image</button>
+    <button id="saveButton">Save XML</button>
+    <span id="counterText"></span>
+  </div>
+  <script src="/eel.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

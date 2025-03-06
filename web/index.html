@@ -2,29 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Image Landmark Annotation</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Husmorph 2.0</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .container {
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 80px;
+      color: #333;
+    }
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+    .button-group a {
+      display: inline-block;
+      padding: 20px 30px;
+      background-color: #3498db;
+      color: #fff;
+      text-decoration: none;
+      font-size: 18px;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+      width: 200px;
+    }
+    .button-group a:hover {
+      background-color: #2980b9;
+    }
+  </style>
 </head>
 <body>
-  <h2>Image Landmark Annotation Tool</h2>
-  <div id="folderSelection">
-    <button id="selectFolderButton">Select Image Folder</button>
-    <span id="folderPath"></span>
-    <button id="selectSaveFolderButton">Select Save Folder</button>
-    <span id="saveFolderPath"></span>
-    <button id="loadXMLButton">Load XML</button>
+  <div class="container">
+    <h1>Husmorph 2.0</h1>
+    <div class="button-group">
+      <a href="landmarking.html">Landmarking</a>
+      <a href="machine_learning.html">Machine Learning</a>
+      <a href="export.html">Export</a>
+    </div>
   </div>
-  <div id="container">
-    <canvas id="imageCanvas"></canvas>
-  </div>
-  <div id="controls">
-    <button id="prevButton">Previous Image</button>
-    <button id="skipButton">Skip Image</button>
-    <button id="nextButton">Next Image</button>
-    <button id="saveButton">Save XML</button>
-    <span id="counterText"></span>
-  </div>
-  <script src="/eel.js"></script>
-  <script src="script.js"></script>
 </body>
 </html>

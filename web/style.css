@@ -14,7 +14,6 @@ body {
 #container {
     display: inline-block;
     position: relative;
-    border: 1px solid #000000;
     background: #5d5d5d;
     max-width: 90vw;
     max-height: 80vh;
@@ -30,18 +29,22 @@ body {
   }
   
   button {
+    display: inline-block;
     padding: 10px 20px;
     margin: 0 10px;
-    font-size: 16px;
+    font-size: 18px;
+    width: 200px;
+    height: 70px;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 5px;
     background-color: #3498db;
     color: rgb(255, 255, 255);
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease;
   }
 
     button:hover {
-        background-color: #2561e3;
+        background-color: #1f6496;
     }
   
   #counterText {
