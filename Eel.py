@@ -10,4 +10,4 @@ def greet(name):
     return f"Hello, {name} from Python!"
 
 # Start the application, opening the specified HTML file in a browser window
-eel.start('index.html', size=(800, 600))
+eel.start('test.html', size=(800, 600))

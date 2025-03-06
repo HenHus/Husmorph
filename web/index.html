@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Eel App</title>
+  <!-- Include eel.js to enable communication with Python -->
+  <script src="eel.js"></script>
 </head>
 <body>
   <h1>Welcome to My Eel App</h1>
-  <script type="text/javascript">
-    // Call the Python function from JavaScript
-    eel.greet('World')(function(response) {
-      console.log(response);
-    });
-  </script>
+  <button id="greet-btn">Greet from Python</button>
+  <script src="script.js"></script>
 </body>
 </html>
