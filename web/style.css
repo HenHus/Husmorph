@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    background: #f0f0f0;
+  }
+  
+  #folderSelection {
+    margin-bottom: 15px;
+  }
+  
+  #container {
+    display: inline-block;
+    position: relative;
+    border: 1px solid #ccc;
+    background: #fff;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow: hidden;
+  }
+  
+  canvas {
+    display: block;
+  }
+  
+  #controls {
+    margin-top: 10px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  #counterText {
+    font-size: 18px;
+    margin-left: 10px;
+  }
+  
