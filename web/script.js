@@ -1,3 +1,4 @@
+// UI element references
 let canvas = document.getElementById("imageCanvas");
 let ctx = canvas.getContext("2d");
 let selectFolderButton = document.getElementById("selectFolderButton");
@@ -6,33 +7,37 @@ let selectSaveFolderButton = document.getElementById("selectSaveFolderButton");
 let saveFolderPathSpan = document.getElementById("saveFolderPath");
 let loadXMLButton = document.getElementById("loadXMLButton");
 let prevButton = document.getElementById("prevButton");
-let skipButton = document.getElementById("skipButton");
 let nextButton = document.getElementById("nextButton");
 let saveButton = document.getElementById("saveButton");
 let counterTextSpan = document.getElementById("counterText");
+let maxLandmarksSelect = document.getElementById("maxLandmarksSelect");
 
 // Global state variables
 let folder = "";
 let saveFolder = "";
-let loadedXMLPath = null;  // path of the loaded XML file (if any)
+let loadedXMLPath = null; // Stores the path of a loaded XML file (if any)
 let imageList = [];
 let currentImageIndex = 0;
 let currentImage = new Image();
-let landmarksData = {};    // keys: image paths, values: arrays of {x, y} in original image coordinates
-let imageDimensions = {};  // keys: image paths, values: {width, height}
+let landmarksData = {};   // { imagePath: [{x, y}, ...] }
+let imageDimensions = {}; // { imagePath: {width, height} }
+let maxLandmarks = parseInt(maxLandmarksSelect.value);
 
-// Variables for scaling and zoom transformation
+// Variables for scaling and zooming
 let baseScale = 1;
 let zoomFactor = 1;
 let currentScaleFactor = 1;
 let offsetX = 0;
 let offsetY = 0;
-
-// Last known mouse coordinates on canvas (for zoom centering)
 let lastMouseX = 0;
 let lastMouseY = 0;
 
-// --- Select image folder handler ---
+// Update maxLandmarks from drop-down
+maxLandmarksSelect.addEventListener("change", function() {
+  maxLandmarks = parseInt(this.value);
+});
+
+// --- Folder Selection ---
 selectFolderButton.addEventListener("click", async () => {
   folder = await eel.select_folder()();
   if (folder) {
@@ -50,7 +55,7 @@ selectFolderButton.addEventListener("click", async () => {
   }
 });
 
-// --- Select save folder handler ---
+// --- Save Folder Selection ---
 selectSaveFolderButton.addEventListener("click", async () => {
   saveFolder = await eel.select_save_folder()();
   if (saveFolder) {
@@ -58,7 +63,7 @@ selectSaveFolderButton.addEventListener("click", async () => {
   }
 });
 
-// --- Load XML file handler ---
+// --- Load XML file ---
 loadXMLButton.addEventListener("click", async () => {
   if (!folder) {
     alert("Please select an image folder first.");
@@ -70,12 +75,11 @@ loadXMLButton.addEventListener("click", async () => {
     let xmlContent = await eel.get_xml_data(xmlFilePath)();
     parseAndLoadXML(xmlContent);
     alert("XML loaded successfully.");
-    // Redraw current image with any loaded landmarks.
-    drawImage();
+    drawImage(); // redraw current image with loaded landmarks
   }
 });
 
-// --- Parse XML content and update landmarksData and imageDimensions ---
+// --- Parse XML and update landmarksData and imageDimensions ---
 function parseAndLoadXML(xmlString) {
   let parser = new DOMParser();
   let xmlDoc = parser.parseFromString(xmlString, "text/xml");
@@ -83,19 +87,14 @@ function parseAndLoadXML(xmlString) {
   for (let i = 0; i < imageNodes.length; i++) {
     let imageNode = imageNodes[i];
     let fileAttr = imageNode.getAttribute("file");
-    // Only load if the image belongs to the current folder (simple check)
-    if (!fileAttr.startsWith(folder)) continue;
-    // Initialize array for landmarks
+    if (!fileAttr.startsWith(folder)) continue; // Only load images from the current folder
     landmarksData[fileAttr] = [];
     let boxNode = imageNode.getElementsByTagName("box")[0];
     if (boxNode) {
       let w = parseInt(boxNode.getAttribute("width"));
       let h = parseInt(boxNode.getAttribute("height"));
-      // Recover original dimensions (we stored width-1, so add 1 back)
-      imageDimensions[fileAttr] = {
-        width: w + 1,
-        height: h + 1
-      };
+      // Add 1 back to recover original dimensions
+      imageDimensions[fileAttr] = { width: w + 1, height: h + 1 };
       let partNodes = boxNode.getElementsByTagName("part");
       for (let j = 0; j < partNodes.length; j++) {
         let part = partNodes[j];
@@ -107,7 +106,7 @@ function parseAndLoadXML(xmlString) {
   }
 }
 
-// --- Update canvas size and compute base scale ---
+// --- Update canvas size ---
 function updateCanvasSize() {
   let container = document.getElementById("container");
   let availableWidth = container.clientWidth;
@@ -123,33 +122,37 @@ function updateCanvasSize() {
   };
 }
 
-// --- Draw image and landmarks using transformation ---
+// --- Draw image and numbered landmarks ---
 function drawImage() {
   ctx.resetTransform();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.setTransform(currentScaleFactor, 0, 0, currentScaleFactor, offsetX, offsetY);
   ctx.drawImage(currentImage, 0, 0);
   let imagePath = imageList[currentImageIndex];
-  let points = landmarksData[imagePath];
-  if (points) {
-    points.forEach(point => {
-      ctx.beginPath();
-      ctx.arc(point.x, point.y, 8 / currentScaleFactor, 0, 2 * Math.PI);
-      ctx.fillStyle = "red";
-      ctx.fill();
-      ctx.strokeStyle = "blue";
-      ctx.stroke();
-    });
-  }
+  let points = landmarksData[imagePath] || [];
+  points.forEach((point, index) => {
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, 8 / currentScaleFactor, 0, 2 * Math.PI);
+    ctx.fillStyle = "red";
+    ctx.fill();
+    ctx.strokeStyle = "blue";
+    ctx.stroke();
+    // Draw landmark number centered in the circle
+    ctx.fillStyle = "white";
+    ctx.font = `${12 / currentScaleFactor}px Arial`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(index + 1, point.x, point.y);
+  });
   ctx.resetTransform();
 }
 
-// --- Update counter display (outside image) ---
+// --- Update counter ---
 function updateCounter() {
   counterTextSpan.textContent = `Image ${currentImageIndex + 1} of ${imageList.length}`;
 }
 
-// --- Load image data and set up canvas ---
+// --- Load image ---
 function loadImage() {
   if (currentImageIndex < 0 || currentImageIndex >= imageList.length) {
     alert("No more images.");
@@ -173,24 +176,27 @@ function loadImage() {
   });
 }
 
-// --- Record mouse position on canvas ---
+// --- Record mouse position ---
 canvas.addEventListener("mousemove", function(e) {
   let rect = canvas.getBoundingClientRect();
   lastMouseX = e.clientX - rect.left;
   lastMouseY = e.clientY - rect.top;
 });
 
-// --- Canvas click event: add a landmark ---
+// --- Canvas click event: add landmark if below maxLandmarks ---
 canvas.addEventListener("click", function(e) {
   let rect = canvas.getBoundingClientRect();
   let x = e.clientX - rect.left;
   let y = e.clientY - rect.top;
   let imagePath = imageList[currentImageIndex];
-  // Convert canvas coordinates to original image coordinates using inverse transform
-  let originalX = (x - offsetX) / currentScaleFactor;
-  let originalY = (y - offsetY) / currentScaleFactor;
-  landmarksData[imagePath].push({ x: originalX, y: originalY });
-  drawImage();
+  if (landmarksData[imagePath].length < maxLandmarks) {
+    let originalX = (x - offsetX) / currentScaleFactor;
+    let originalY = (y - offsetY) / currentScaleFactor;
+    landmarksData[imagePath].push({ x: originalX, y: originalY });
+    drawImage();
+  } else {
+    alert("Maximum number of landmarks reached for this image.");
+  }
 });
 
 // --- Right-click: remove last landmark ---
@@ -204,12 +210,33 @@ canvas.addEventListener("contextmenu", function(e) {
   return false;
 });
 
+// --- Navigation buttons ---
+prevButton.addEventListener("click", function() {
+  if (currentImageIndex > 0) {
+    currentImageIndex--;
+    loadImage();
+  } else {
+    alert("This is the first image.");
+  }
+});
+
+nextButton.addEventListener("click", function() {
+  currentImageIndex++;
+  if (currentImageIndex < imageList.length) {
+    loadImage();
+  } else {
+    alert("All images processed.");
+    ctx.resetTransform();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+});
+
 // --- Keyboard events for zooming ---
-// Pressing "w" zooms in centered on the current mouse pointer.
+// Press "w" to zoom in centered on mouse pointer.
 document.addEventListener("keydown", function(e) {
   if (e.key === "w") {
     if (zoomFactor === 1) {
-      zoomFactor = 2;  // Adjust zoom level as desired
+      zoomFactor = 4;
       offsetX = lastMouseX * (1 - zoomFactor);
       offsetY = lastMouseY * (1 - zoomFactor);
       currentScaleFactor = baseScale * zoomFactor;
@@ -219,7 +246,6 @@ document.addEventListener("keydown", function(e) {
     }
   }
 });
-
 document.addEventListener("keyup", function(e) {
   if (e.key === "w") {
     if (zoomFactor !== 1) {
@@ -232,44 +258,8 @@ document.addEventListener("keyup", function(e) {
   }
 });
 
-// --- Previous Image button handler ---
-prevButton.addEventListener("click", function() {
-  if (currentImageIndex > 0) {
-    currentImageIndex--;
-    loadImage();
-  } else {
-    alert("This is the first image.");
-  }
-});
-
-// --- Skip Image button handler ---
-// Discards annotations for the current image.
-skipButton.addEventListener("click", function() {
-  let imagePath = imageList[currentImageIndex];
-  delete landmarksData[imagePath];
-  loadNextImage();
-});
-
-// --- Next Image button handler ---
-// Moves to the next image while preserving annotations.
-nextButton.addEventListener("click", function() {
-  loadNextImage();
-});
-
-// --- Load the next image ---
-function loadNextImage() {
-  currentImageIndex++;
-  if (currentImageIndex < imageList.length) {
-    loadImage();
-  } else {
-    alert("All images processed.");
-    ctx.resetTransform();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-}
-
-// --- Save XML button handler ---
-// If an XML file was loaded, overwrite it; otherwise, use the selected save folder.
+// --- Save XML button ---
+// If an XML file was loaded, overwrite it; otherwise use the selected save folder.
 saveButton.addEventListener("click", async function() {
   if (loadedXMLPath) {
     let result = await eel.save_xml_edit(landmarksData, imageDimensions, loadedXMLPath)();
