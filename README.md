@@ -4,7 +4,7 @@ HUSMORPH is a graphical user interface (GUI) designed for landmark placement on 
 
 ## Important!
 
-Unfortunately, the software is currently very big, and requires 1GB storage.
+The software is currently very big, and requires 1GB storage.
 
 The startup time is long. Be patient, it can take up to 1 min before the software is running.
 
