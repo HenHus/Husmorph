@@ -72,7 +72,7 @@ Husmorph includes a built-in machine learning pipeline to predict landmarks auto
 #### Training a Model
 1. Select an XML file containing landmark data for training.
 2. Set the number of *threads* your computer should use.
-   - **General recommendation:** Save 1–2 threads for system processes. For a typical laptop, use ~5 threads.
+   - **General recommendation:** Save 1–2 threads for system processes. For a typical laptop, use ~5 threads. Check your system for amount for cores, and use ~80% of these.
 3. Specify the number of *trials* for parameter optimization.
    - More trials increase the likelihood of finding the optimal model but also increase training time. We recommend between 50-100 trials.
 
