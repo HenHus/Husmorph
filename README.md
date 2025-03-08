@@ -1,4 +1,4 @@
-# HUSMORPH v2.0 (early release)
+# HUSMORPH v2.0 (early release for MacOS)
 
 HUSMORPH is a graphical user interface (GUI) designed for landmark placement on images. It supports both manual placement and automated machine learning-based predictions. This versatile tool can be used right out of the box or by running the scripts provided in this repository for more customized workflows.
 
@@ -34,11 +34,16 @@ You can download the application using the links below. The files are hosted on 
 
    > **Note:** Mac-users may have to right-click, and then press `open` the first time opening the software to bypass security warnings. Otherwise, it can be found in settings -> security on your computer.
 
-**[Download here](https://drive.google.com/file/d/1Weko3YBif2mEi5Uz-tU1BdMo0vcGYBuT/view?usp=share_link)**
+**[Download here (v2.0 early release)](https://drive.google.com/file/d/1EeeiWF8GwBHTh2vyoDpooLWOXrgU_RS9/view?usp=sharing)**
+
+**[Download here (v1)](https://drive.google.com/file/d/1Weko3YBif2mEi5Uz-tU1BdMo0vcGYBuT/view?usp=share_link)**
+
+
+
 
 ---
 
-# Using the Tool
+# Using the Tool (v2.0)
 
 ## Landmarking - view and placement
 
