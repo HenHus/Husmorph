@@ -1,7 +1,12 @@
-# HUSMORPH
-# THIS IS A DEVELOPING BRANCH AND SHOULD NOT BE USED
+# HUSMORPH v2.0 (early release)
 
 HUSMORPH is a graphical user interface (GUI) designed for landmark placement on images. It supports both manual placement and automated machine learning-based predictions. This versatile tool can be used right out of the box or by running the scripts provided in this repository for more customized workflows.
+
+## Important!
+
+Unfortunately, the software is currently very big, and requires 1GB storage.
+
+The startup time is long. Be patient, it can take up to 1 min before the software is running.
 
 ## Features
 - Intuitive interface for manual landmark placement on images.
@@ -33,58 +38,54 @@ You can download the application using the links below. The files are hosted on 
 
 ---
 
-## Using the Tool
+# Using the Tool
 
-### Setting Landmarks on Images
+## Landmarking - view and placement
 
-1. Click **Set landmarks on images** to open the landmark placement window.
-2. **Image Requirements:**
-   - Images can have any resolution, but all images in the folder must share the same resolution.
-   - For machine learning purposes, ensure the resolution is 2,000,000 pixels or lower (e.g., around 1920x1080).
-3. Select the folder containing your images. The selected folder path will be displayed.
+### Setup
+1. **Image Requirements:**
+   - Images can have any resolution
+   - For machine learning purposes, ensure the resolution is 2MP or lower (e.g., < 1920x1080).
+2. Upload the image folder you like to use. Once selected, the images will appear beneath in the same section.
+3. Pick a save destination for your XML file, which will contain the landmark data.
 4. Specify the number of landmarks to place on each image.
-5. Ensure the "Use the selected model" option is **unchecked**, then click **Place landmarks**.
 
-#### Landmark Placement Workflow
-- A new window will open, displaying each image in your selected folder one at a time.
-- **Controls:**
-  1. **Left-click** to place a landmark.
-  2. **Right-click** to delete the last placed landmark.
-  3. Once all landmarks are placed for an image, **left-click** to proceed to the next image.
-  4. To skip an image, press **Tab**.
-- After processing all images, the window will close automatically, and the data will be saved to an XML file in the same parent folder as your images.
+### Usage - landmarking
+
+ **Controls:**
+  - **Left-click** to place a landmark.
+  - **Right-click** to delete the last placed landmark.
+  - Press '**W**' to zoom in on an area to precisely place a landmark.
+  - Once all landmarks are placed for an image, press '**D**' to proceed to the next image, '**A**' to go back to the previous image, or use the buttons underneath the image.
+  - Press '**S**' to save the landmarks to the chosen location, or use the '**Save XML**' button.
 
 ---
 
-### Visualizing Landmarks
+### Usage - viewing and editing
 
-- Open the XML file containing the landmark data you want to view.
-- Ensure the original image folder remains in its original location (the images must be accessible for visualization). The XML file references the images by their original path, so if the images are moved, the landmarks cannot be overlaid correctly.
-- Use **Spacebar** to navigate through the images while viewing their landmarks.
-- Press `c` to cancel, and go back to the program.
----
+   XML file containing data to the uploaded can at any time be uploaded using the '**Upload existing XML**' button. Then, previously annotated landmarks can be viewed and edited in the same way with the same controls as above, and saved to the same uploaded XML file.
 
-### Machine Learning
+## Machine Learning Training
 
 Husmorph includes a built-in machine learning pipeline to predict landmarks automatically. To use this functionality, you first need to train the model on your dataset, enabling it to make accurate predictions for landmark placement in future images.
 
 #### Training a Model
 1. Select an XML file containing landmark data for training.
 2. Set the number of *threads* your computer should use.
-   - **Note:** The program auto-detects your computer's capabilities, and estimates how many threads you should use
    - **General recommendation:** Save 1–2 threads for system processes. For a typical laptop, use ~5 threads.
 3. Specify the number of *trials* for parameter optimization.
-   - More trials increase the likelihood of finding the optimal model but also increase training time.
+   - More trials increase the likelihood of finding the optimal model but also increase training time. We recommend between 50-100 trials.
 
    > **Analogy:** Think of a rifle shooter improving over time. Each trial fine-tunes the shooter’s accuracy, increasing the likelihood of hitting the target center.
 4. Choose the folder where the trained model will be saved. During training, this folder will temporarily store intermediate files. The best model from each trial (based on cross-validation) is saved in this folder. The filenames indicate the mean deviation from cross-validation, allowing to compare trials fairly and monitor performance.
 
 **Note**: the software becomes unresponsive once training has started.
 
-5. Once training is complete, the model can be used in the **Set landmarks on images** tab. Remember to:
-   - Select a new set of images
-   - Select the created model
-   - Use images with the same resolution as those used for training for best results
+**Note**: follow in the TERMINAL window to follow the training!
+
+## Predict landmarks
+
+Once training is complete, the model can be used for prediction by uploading a image folder, and the model under this section. The results can be displayed in the '**Landmarking - view and placement**' section, by uploading the same image folder there, along with the XML file containing the predicted data.
 
 ---
 
@@ -97,7 +98,7 @@ Currently, we only support exporting landmark data from XML to CSV format. Suppo
 ## Notes and Best Practices
 - Always use consistent image resolutions within a dataset, especially when using machine learning models.
 - Keep the original image folder intact if you plan to visualize landmarks later.
-- For optimal machine learning performance, balance the number of trials and threads based on your system's capabilities. For good performance, we recommend at least 200 images.
+- For optimal machine learning performance, balance the number of trials and threads based on your system's capabilities. For good performance, we recommend at least 150 images.
 
 ---
 
