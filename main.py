@@ -2,9 +2,11 @@ import eel
 import os
 import csv
 import base64
-import tkinter as tk
-from tkinter import filedialog
-from husmorph.Utils import ShapePredictorTrainer, predict_landmarks
+import sys
+import customtkinter as ctk
+from customtkinter import filedialog
+from web.Utils import ShapePredictorTrainer, predict_landmarks
+from PyQt5 import QtWidgets
 import xml.etree.ElementTree as ET
 
 eel.init('web')
@@ -12,16 +14,19 @@ VALID_EXTENSIONS = ('.jpg', '.jpeg', '.png')
 
 @eel.expose
 def select_folder():
-    root = tk.Tk()
-    root.withdraw()
-    folder = filedialog.askdirectory(title="Select Folder with Images")
+    # Create a QApplication instance if one isn't already running.
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    folder = QtWidgets.QFileDialog.getExistingDirectory(
+        None, "Select Folder with Images"
+    )
     return folder
 
 @eel.expose
 def select_save_folder():
-    root = tk.Tk()
-    root.withdraw()
-    folder = filedialog.askdirectory(title="Select Folder to Save XML")
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    folder = QtWidgets.QFileDialog.getExistingDirectory(
+        None, "Select save destination"
+    )
     return folder
 
 @eel.expose
@@ -45,9 +50,10 @@ def get_image_data(image_path):
 
 @eel.expose
 def select_xml_file():
-    root = tk.Tk()
-    root.withdraw()
-    file_path = filedialog.askopenfilename(title="Select XML File", filetypes=[("XML Files", "*.xml")])
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+        None, "Select a datafile", "", "XML Files (*.xml)"
+    )
     return file_path
 
 @eel.expose
@@ -129,10 +135,11 @@ def init_training(xml_file, path, threads, n_trials):
 
 @eel.expose
 def open_mlFile():
-    root = tk.Tk()
-    root.withdraw()
-    file = filedialog.askopenfilename()
-    return file
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+        None, "Select a ML model", "", "Data Files (*.dat)"
+    )
+    return file_path
 
 @eel.expose
 def predict_new_landmarks(ml_model, images, path):

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Husmorph 2.0 - Index</title>
+    <title>Husmorph v2.0</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="style.css" />
     <style>
@@ -10,20 +10,20 @@
       body {
         margin: 0;
         padding: 20px;
-        background: #f5f5f5;
+        background: #7f7f7f;
         font-family: Arial, sans-serif;
       }
       h1,
       h2 {
         text-align: center;
-        color: #333;
+        color: #1e1e1e;
       }
       .section {
-        margin: 30px 5rem;
+        margin: 6rem 5rem;
         padding: 50px;
-        background: #fff;
+        background: #d5d5d5;
         border-radius: 8px;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 3px 20px rgba(0, 0, 0, 0.6);
         max-width: 1500px;
       }
       /* Landmarking Section */
@@ -57,7 +57,7 @@
       .ml-container .form-group,
       .ml-container .slider-group {
         margin-bottom: 15px;
-        text-align: left;
+        text-align: center;
         max-width: 400px;
         margin-left: auto;
         margin-right: auto;
@@ -90,26 +90,87 @@
         transition: background-color 0.3s;
       }
       .ml-container button:hover {
-        background-color: #2980b9;
+        background-color: #303bc7;
       }
-      /* Back button (if needed in future sections) can be added here */
+      /* Prediction Section Styles */
+      #predictionSection .form-group {
+        margin-bottom: 15px;
+        text-align: center;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      #predictionSection label {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 5px;
+        color: #333;
+      }
+      #predictionSection button {
+        width: 50%;
+        padding: 10px 20px;
+        font-size: 18px;
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      #predictionSection button:hover {
+        background-color: #303bc7;
+      }
+      /* XML to CSV Conversion Section Styles */
+      #xmlToCsvSection .form-group {
+        margin-bottom: 15px;
+        text-align: center;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      #xmlToCsvSection label {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 5px;
+        color: #333;
+      }
+      #xmlToCsvSection button {
+        width: 50%;
+        padding: 10px 20px;
+        font-size: 18px;
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      #xmlToCsvSection button:hover {
+        background-color: #303bc7;
+      }
     </style>
   </head>
   <body>
-    <h1>Husmorph v2.0</h1>
+    <h1 style="font-size: 42px; margin-bottom: 40px;">Husmorph v2.0</h1>
 
     <!-- Landmarking Section -->
     <div class="section" id="landmarkingSection">
-      <h2>Landmark Annotation Tool</h2>
+      <h1>Landmark Annotation Tool</h1>
+      <h3>Hotkeys:</h3>
+      <p>Hold 'W' to zoom in</p>
+      <p>Press 'A' for previous image</p>
+      <p>Press 'D' for next image</p>
+      <p>Press 'S' to save XML</p>
+      <p>Left click to place landmark, right click to erase</p>
       <div id="controls-top">
-        <label for="maxLandmarksSelect">Max Landmarks per Image:</label>
+        <label for="maxLandmarksSelect">Landmarks per Image:</label>
         <select id="maxLandmarksSelect">
           <!-- Options 1 to 20 -->
           <option value="1">1</option>
-          <option value="2">2</option>
+          <option value="2" selected>2</option>
           <option value="3">3</option>
           <option value="4">4</option>
-          <option value="5" selected>5</option>
+          <option value="5">5</option>
           <option value="6">6</option>
           <option value="7">7</option>
           <option value="8">8</option>
@@ -128,11 +189,11 @@
         </select>
       </div>
       <div id="folderSelection">
-        <button id="selectFolderButton">Select Image Folder</button>
-        <span id="folderPath"></span>
-        <button id="selectSaveFolderButton">Select Save Folder</button>
-        <span id="saveFolderPath"></span>
-        <button id="loadXMLButton">Load XML</button>
+        <button id="selectFolderButton">Upload Image Folder</button>
+        <span id="folderPath" style="font-size: 12px;"></span>
+        <button id="selectSaveFolderButton">Select Save Location</button>
+        <span id="saveFolderPath" style="font-size: 12px;"></span>
+        <button id="loadXMLButton">Upload existing XML</button>
       </div>
       <div id="container">
         <canvas id="imageCanvas"></canvas>
@@ -141,67 +202,67 @@
         <button id="prevButton">Previous Image</button>
         <button id="nextButton">Next Image</button>
         <button id="saveButton">Save XML</button>
-        <span id="counterText"></span>
+        <span id="counterText" style="margin-top: 10px;"></span>
       </div>
     </div>
 
     <!-- Machine Learning Section -->
     <div class="section ml-container" id="mlSection">
-      <h2>Machine Learning Setup</h2>
+      <h1>Machine Learning Training</h1>
       <div class="form-group">
-        <label for="mlXmlPath">XML File:</label>
-        <button id="mlSelectXmlButton">Select XML File</button>
-        <span id="mlXmlPathSpan"></span>
+        <label for="mlXmlPath">Upload XML-file for training here:</label>
+        <button id="mlSelectXmlButton">Upload XML File</button>
+        <span id="mlXmlPathSpan" style="font-size: 12px;"></span>
       </div>
       <div class="form-group">
-        <button id="mlSelectSaveFolderButton">Select Save Folder</button>
-        <span id="mlSaveFolderPath"></span>
+        <label for="mlXmlPath">Select save destination for the model:</label>
+        <button id="mlSelectSaveFolderButton">Select Folder</button>
+        <span id="mlSaveFolderPath" style="font-size: 12px;"></span>
       </div>
       <div class="slider-group">
-        <label for="trialsRange">Choose Amounts of Trials (20-150):</label>
+        <label for="trialsRange">Choose Amounts of Trials to run:</label>
         <input type="range" id="trialsRange" min="20" max="150" value="20" />
         <div class="slider-value">Trials: <span id="trialsValue">20</span></div>
       </div>
       <div class="slider-group">
-        <label for="threadsRange">Amounts of Threads (1-25):</label>
-        <input type="range" id="threadsRange" min="1" max="25" value="1" />
+        <label for="threadsRange">Amounts of Threads (don't change if uncertain):</label>
+        <input type="range" id="threadsRange" min="1" max="25" value="5" />
         <div class="slider-value">
-          Threads: <span id="threadsValue">1</span>
+          Threads: <span id="threadsValue">5</span>
         </div>
       </div>
-      <button id="startButton">Start</button>
+      <button id="startButton" style="margin-top: 3rem;">Start training</button>
     </div>
 
     <!-- Prediction Section -->
     <div class="section" id="predictionSection">
-      <h2>Predict Landmarks</h2>
+      <h1>Predict Landmarks</h1>
       <div class="form-group">
-        <label>Select Image Folder:</label>
-        <button id="predSelectFolderButton">Select Image Folder</button>
-        <span id="predFolderPath"></span>
+        <label>Upload image folder to predict landmarks on:</label>
+        <button id="predSelectFolderButton">Upload Folder</button>
+        <span id="predFolderPath" style="font-size: 12px;"></span>
       </div>
       <div class="form-group">
-        <label>Select ML Model (.dat):</label>
+        <label>Select ML Model to use (.dat file):</label>
         <button id="predSelectModelButton">Select ML Model</button>
-        <span id="mlModelPathSpan"></span>
+        <span id="mlModelPathSpan" style="font-size: 12px;"></span>
       </div>
       <div class="form-group">
-        <label>Select Save Folder for XML:</label>
+        <label>Select save location for XML:</label>
         <button id="predSelectSaveFolderButton">Select Save Folder</button>
-        <span id="predSaveFolderPath"></span>
+        <span id="predSaveFolderPath" style="font-size: 12px;"></span>
       </div>
-      <button id="predictButton">Predict Landmarks</button>
+      <button id="predictButton" style="margin-top: 3rem;">Predict Landmarks</button>
     </div>
 
     <!-- XML to CSV Conversion Section -->
     <div class="section" id="xmlToCsvSection">
       <h2>Convert XML to CSV</h2>
       <div class="form-group">
-        <label>Select XML File:</label>
         <button id="csvSelectXmlButton">Select XML File</button>
         <span id="csvXmlPathSpan"></span>
       </div>
-      <button id="convertButton">Convert to CSV</button>
+      <button id="convertButton" style="margin-top: 3rem;">Convert to CSV</button>
     </div>
 
     <script src="/eel.js"></script>

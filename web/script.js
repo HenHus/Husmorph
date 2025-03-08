@@ -91,7 +91,7 @@ function drawImage() {
   let points = landmarksData[imagePath] || [];
   points.forEach((point, index) => {
     ctx.beginPath();
-    ctx.arc(point.x, point.y, 8 / currentScaleFactor, 0, 2 * Math.PI);
+    ctx.arc(point.x, point.y, 15 / currentScaleFactor, 0, 2 * Math.PI);
     ctx.fillStyle = "red";
     ctx.fill();
     ctx.strokeStyle = "blue";
@@ -193,6 +193,16 @@ canvas.addEventListener("mousemove", function (e) {
   lastMouseY = e.clientY - rect.top;
 });
 
+document.addEventListener("keydown", function (e) {
+  if (e.key === "a") {
+    prevButton.click();
+  } else if (e.key === "d") {
+    nextButton.click();
+  } else if (e.key === "s") {
+    saveButton.click();
+  }
+});
+
 /* ------------------------- ZOOMING WITH "w" ------------------------- */
 // We want to zoom 4× so that the image coordinate under the mouse becomes centered.
 // We do not change the canvas drawing buffer size.
@@ -288,9 +298,10 @@ startButton.addEventListener("click", async () => {
   }
   const trials = parseInt(trialsRange.value);
   const threads = parseInt(threadsRange.value);
+  alert("Training started. Check the terminal window for updates. The app beomes unresponsive during training.");
   // Call your Python function using the XML file path (mlXmlPath) instead of content.
   eel.init_training(mlXmlPath, mlSaveFolder, threads, trials)(function (result) {
-    alert(result);
+    alert("Finished training" + result);
   });
 });
 
