@@ -36,7 +36,7 @@ let storedOffsetX = 0, storedOffsetY = 0;  // to store offsets before zoom.
 let lastMouseX = 0, lastMouseY = 0; // in displayed (CSS) coordinates.
 
 // Update maxLandmarks from the drop-down.
-maxLandmarksSelect.addEventListener("change", function() {
+maxLandmarksSelect.addEventListener("change", function () {
   maxLandmarks = parseInt(this.value);
 });
 
@@ -57,10 +57,10 @@ function loadImage() {
   offsetX = 0;
   offsetY = 0;
   currentScaleFactor = baseScale * zoomFactor;
-  
-  eel.get_image_data(imagePath)(function(dataUrl) {
+
+  eel.get_image_data(imagePath)(function (dataUrl) {
     currentImage = new Image();
-    currentImage.onload = function() {
+    currentImage.onload = function () {
       // Set canvas drawing buffer to natural dimensions.
       canvas.width = currentImage.naturalWidth;
       canvas.height = currentImage.naturalHeight;
@@ -125,7 +125,7 @@ function getNaturalCoordinates(e) {
   };
 }
 
-canvas.addEventListener("click", function(e) {
+canvas.addEventListener("click", function (e) {
   let coords = getNaturalCoordinates(e);
   // Invert current transform: natural coordinates = (displayCoord - offset) / currentScaleFactor.
   let imageX = (coords.x - offsetX) / currentScaleFactor;
@@ -141,7 +141,7 @@ canvas.addEventListener("click", function(e) {
 });
 
 // Right-click removes the last landmark.
-canvas.addEventListener("contextmenu", function(e) {
+canvas.addEventListener("contextmenu", function (e) {
   e.preventDefault();
   let imagePath = imageList[currentImageIndex];
   if (landmarksData[imagePath].length > 0) {
@@ -152,7 +152,7 @@ canvas.addEventListener("contextmenu", function(e) {
 });
 
 // Navigation buttons.
-prevButton.addEventListener("click", function() {
+prevButton.addEventListener("click", function () {
   if (currentImageIndex > 0) {
     currentImageIndex--;
     loadImage();
@@ -160,7 +160,7 @@ prevButton.addEventListener("click", function() {
     alert("This is the first image.");
   }
 });
-nextButton.addEventListener("click", function() {
+nextButton.addEventListener("click", function () {
   currentImageIndex++;
   if (currentImageIndex < imageList.length) {
     loadImage();
@@ -172,7 +172,7 @@ nextButton.addEventListener("click", function() {
 });
 
 // Save XML button.
-saveButton.addEventListener("click", async function() {
+saveButton.addEventListener("click", async function () {
   if (loadedXMLPath) {
     let result = await eel.save_xml_edit(landmarksData, imageDimensions, loadedXMLPath)();
     alert(result);
@@ -187,7 +187,7 @@ saveButton.addEventListener("click", async function() {
 });
 
 // Record last mouse position (in displayed coordinates) for zooming.
-canvas.addEventListener("mousemove", function(e) {
+canvas.addEventListener("mousemove", function (e) {
   let rect = canvas.getBoundingClientRect();
   lastMouseX = e.clientX - rect.left;
   lastMouseY = e.clientY - rect.top;
@@ -196,7 +196,7 @@ canvas.addEventListener("mousemove", function(e) {
 /* ------------------------- ZOOMING WITH "w" ------------------------- */
 // We want to zoom 4× so that the image coordinate under the mouse becomes centered.
 // We do not change the canvas drawing buffer size.
-document.addEventListener("keydown", function(e) {
+document.addEventListener("keydown", function (e) {
   if (e.key === "w" && zoomFactor === 1) {
     zoomFactor = 4;
     // Store the current offsets for later restoration.
@@ -217,7 +217,7 @@ document.addEventListener("keydown", function(e) {
     drawImage();
   }
 });
-document.addEventListener("keyup", function(e) {
+document.addEventListener("keyup", function (e) {
   if (e.key === "w" && zoomFactor !== 1) {
     zoomFactor = 1;
     // Revert offsets.
@@ -246,10 +246,10 @@ const mlXmlPathSpan = document.getElementById("mlXmlPathSpan");
 let mlXmlPath = "";  // Will store the selected XML file path
 
 // Update slider displays.
-trialsRange.addEventListener("input", function() {
+trialsRange.addEventListener("input", function () {
   trialsValue.textContent = this.value;
 });
-threadsRange.addEventListener("input", function() {
+threadsRange.addEventListener("input", function () {
   threadsValue.textContent = this.value;
 });
 
@@ -289,7 +289,7 @@ startButton.addEventListener("click", async () => {
   const trials = parseInt(trialsRange.value);
   const threads = parseInt(threadsRange.value);
   // Call your Python function using the XML file path (mlXmlPath) instead of content.
-  eel.init_training(mlXmlPath, mlSaveFolder, threads, trials)(function(result) {
+  eel.init_training(mlXmlPath, mlSaveFolder, threads, trials)(function (result) {
     alert(result);
   });
 });
@@ -427,7 +427,34 @@ predictButton.addEventListener("click", async () => {
   }
   alert("Prediction started. This may take a few seconds.");
   // Call your Python function with the ML model path, prediction folder, and save folder.
-  eel.predict_new_landmarks(mlModelPath, predFolder, predSaveFolder)(function(result) {
+  eel.predict_new_landmarks(mlModelPath, predFolder, predSaveFolder)(function (result) {
     alert("Prediction result saved to: " + predSaveFolder);
+  });
+});
+
+/* ===================== XML to CSV Conversion ===================== */
+const csvSelectXmlButton = document.getElementById("csvSelectXmlButton");
+const csvXmlPathSpan = document.getElementById("csvXmlPathSpan");
+let csvXmlPath = "";
+
+const convertButton = document.getElementById("convertButton");
+
+// Select XML file for CSV conversion.
+csvSelectXmlButton.addEventListener("click", async () => {
+  // Use your Eel function to open a file dialog for XML files.
+  csvXmlPath = await eel.select_xml_file()();
+  if (csvXmlPath) {
+    csvXmlPathSpan.textContent = csvXmlPath;
+  }
+});
+
+// Convert the selected XML file to CSV.
+convertButton.addEventListener("click", async () => {
+  if (!csvXmlPath) {
+    alert("Please select an XML file to convert.");
+    return;
+  }
+  eel.xml_to_csv(csvXmlPath)(function (result) {
+    alert("CSV file saved successfully to: " + result);
   });
 });

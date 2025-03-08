@@ -1,5 +1,6 @@
 import eel
 import os
+import csv
 import base64
 import tkinter as tk
 from tkinter import filedialog
@@ -139,5 +140,48 @@ def predict_new_landmarks(ml_model, images, path):
         predict_landmarks(ml_model, images, path)
     except Exception as e:
         return e
+
+@eel.expose
+def xml_to_csv(xml_file):
+    try:
+        tree = ET.parse(xml_file)
+        root = tree.getroot()
+        images = root.findall('.//image')
+        rows = []
+        for img in images:
+            image_name = img.get('file')
+            # Use the basename only.
+            base_name = os.path.basename(image_name)
+            # Find the <box> element and its parts.
+            box = img.find('box')
+            if box is not None:
+                parts = box.findall('part')
+                row = [base_name]
+                for part in parts:
+                    # Convert coordinates to integers.
+                    x = int(float(part.get('x')))
+                    y = int(float(part.get('y')))
+                    row.extend([x, y])
+                rows.append(row)
+        # Determine output CSV file path (same directory as XML, same base name).
+        csv_file = os.path.splitext(xml_file)[0] + '.csv'
+        # Determine maximum number of landmark columns (excluding image name).
+        max_cols = max((len(row) - 1 for row in rows), default=0)
+        # Prepare header.
+        header = ["image name"]
+        num_landmarks = max_cols // 2
+        for i in range(1, num_landmarks + 1):
+            header.extend([f"x{i}", f"y{i}"])
+        with open(csv_file, 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(header)
+            for row in rows:
+                # Pad row if necessary.
+                if len(row) < len(header):
+                    row.extend([""] * (len(header) - len(row)))
+                writer.writerow(row)
+        return csv_file
+    except Exception as e:
+        return f"Error converting XML to CSV: {e}"
 
 eel.start('index.html', size=(1024, 768))
