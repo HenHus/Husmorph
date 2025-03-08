@@ -3,6 +3,7 @@ import os
 import base64
 import tkinter as tk
 from tkinter import filedialog
+from husmorph.Utils import ShapePredictorTrainer, predict_landmarks
 import xml.etree.ElementTree as ET
 
 eel.init('web')
@@ -116,5 +117,27 @@ def save_xml_edit(landmarks, image_dims, xml_file_path):
     tree = ET.ElementTree(root_elem)
     tree.write(xml_file_path, xml_declaration=True, encoding="utf-8")
     return f"Landmarks saved to {xml_file_path}"
+
+@eel.expose
+def init_training(xml_file, path, threads, n_trials):
+    try:
+        trainer = ShapePredictorTrainer(xml_file=xml_file, base_path=path, threads=threads)
+        trainer.parallel_optuna(n_trials)
+    except Exception as e:
+        print(e)
+
+@eel.expose
+def open_mlFile():
+    root = tk.Tk()
+    root.withdraw()
+    file = filedialog.askopenfilename()
+    return file
+
+@eel.expose
+def predict_new_landmarks(ml_model, images, path):
+    try:
+        predict_landmarks(ml_model, images, path)
+    except Exception as e:
+        return e
 
 eel.start('index.html', size=(1024, 768))

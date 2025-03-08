@@ -125,7 +125,6 @@ function getNaturalCoordinates(e) {
   };
 }
 
-// Landmarking click: add landmark if under maxLandmarks.
 canvas.addEventListener("click", function(e) {
   let coords = getNaturalCoordinates(e);
   // Invert current transform: natural coordinates = (displayCoord - offset) / currentScaleFactor.
@@ -133,7 +132,8 @@ canvas.addEventListener("click", function(e) {
   let imageY = (coords.y - offsetY) / currentScaleFactor;
   let imagePath = imageList[currentImageIndex];
   if (landmarksData[imagePath].length < maxLandmarks) {
-    landmarksData[imagePath].push({ x: imageX, y: imageY });
+    // Round to whole integers.
+    landmarksData[imagePath].push({ x: Math.round(imageX), y: Math.round(imageY) });
     drawImage();
   } else {
     alert("Maximum number of landmarks reached for this image.");
@@ -237,6 +237,13 @@ const threadsRange = document.getElementById("threadsRange");
 const trialsValue = document.getElementById("trialsValue");
 const threadsValue = document.getElementById("threadsValue");
 const startButton = document.getElementById("startButton");
+const mlSelectSaveFolderButton = document.getElementById("mlSelectSaveFolderButton");
+const mlSaveFolderPath = document.getElementById("mlSaveFolderPath");
+let mlSaveFolder = "";
+
+const mlSelectXmlButton = document.getElementById("mlSelectXmlButton");
+const mlXmlPathSpan = document.getElementById("mlXmlPathSpan");
+let mlXmlPath = "";  // Will store the selected XML file path
 
 // Update slider displays.
 trialsRange.addEventListener("input", function() {
@@ -256,24 +263,33 @@ function readXMLFile(file) {
   });
 }
 
-// Start ML process.
-startButton.addEventListener("click", async () => {
-  if (xmlUpload.files.length === 0) {
-    alert("Please upload an XML file.");
-    return;
+// ML: Select Save Folder.
+mlSelectSaveFolderButton.addEventListener("click", async () => {
+  mlSaveFolder = await eel.select_save_folder()();
+  if (mlSaveFolder) {
+    mlSaveFolderPath.textContent = mlSaveFolder;
   }
-  const xmlFile = xmlUpload.files[0];
-  let xmlContent;
-  try {
-    xmlContent = await readXMLFile(xmlFile);
-  } catch (err) {
-    alert("Error reading XML file.");
+});
+
+// ML: Select XML File.
+mlSelectXmlButton.addEventListener("click", async () => {
+  // Use eel.select_xml_file() to open a file dialog and get the XML file path.
+  mlXmlPath = await eel.select_xml_file()();
+  if (mlXmlPath) {
+    mlXmlPathSpan.textContent = mlXmlPath;
+  }
+});
+
+// ML: Start machine learning.
+startButton.addEventListener("click", async () => {
+  if (!mlXmlPath) {
+    alert("Please select an XML file first.");
     return;
   }
   const trials = parseInt(trialsRange.value);
   const threads = parseInt(threadsRange.value);
-  // Call your Python function via Eel (adjust function name/parameters as needed).
-  eel.start_machine_learning(xmlContent, trials, threads)(function(result) {
+  // Call your Python function using the XML file path (mlXmlPath) instead of content.
+  eel.init_training(mlXmlPath, mlSaveFolder, threads, trials)(function(result) {
     alert(result);
   });
 });
@@ -295,6 +311,39 @@ selectFolderButton.addEventListener("click", async () => {
     }
   }
 });
+
+// --- Parse XML content and update landmarksData and imageDimensions ---
+function parseAndLoadXML(xmlString) {
+  let parser = new DOMParser();
+  let xmlDoc = parser.parseFromString(xmlString, "text/xml");
+  let imageNodes = xmlDoc.getElementsByTagName("image");
+  for (let i = 0; i < imageNodes.length; i++) {
+    let imageNode = imageNodes[i];
+    let fileAttr = imageNode.getAttribute("file");
+    // Only load if the image belongs to the current folder (simple check)
+    if (!fileAttr.startsWith(folder)) continue;
+    // Initialize array for landmarks
+    landmarksData[fileAttr] = [];
+    let boxNode = imageNode.getElementsByTagName("box")[0];
+    if (boxNode) {
+      let w = parseInt(boxNode.getAttribute("width"));
+      let h = parseInt(boxNode.getAttribute("height"));
+      // Recover original dimensions (we stored width-1, so add 1 back)
+      imageDimensions[fileAttr] = {
+        width: w + 1,
+        height: h + 1
+      };
+      let partNodes = boxNode.getElementsByTagName("part");
+      for (let j = 0; j < partNodes.length; j++) {
+        let part = partNodes[j];
+        let x = parseFloat(part.getAttribute("x"));
+        let y = parseFloat(part.getAttribute("y"));
+        landmarksData[fileAttr].push({ x, y });
+      }
+    }
+  }
+}
+
 selectSaveFolderButton.addEventListener("click", async () => {
   saveFolder = await eel.select_save_folder()();
   if (saveFolder) {
@@ -314,4 +363,71 @@ loadXMLButton.addEventListener("click", async () => {
     alert("XML loaded successfully.");
     drawImage();
   }
+});
+
+/* ===================== PREDICTION FUNCTIONALITY ===================== */
+
+// Prediction Section UI element references
+const predSelectFolderButton = document.getElementById("predSelectFolderButton");
+const predFolderPathSpan = document.getElementById("predFolderPath");
+let predFolder = "";
+
+const predSelectModelButton = document.getElementById("predSelectModelButton");
+const mlModelPathSpan = document.getElementById("mlModelPathSpan");
+let mlModelPath = "";
+
+const predSelectSaveFolderButton = document.getElementById("predSelectSaveFolderButton");
+const predSaveFolderPath = document.getElementById("predSaveFolderPath");
+let predSaveFolder = "";
+
+const predictButton = document.getElementById("predictButton");
+
+// Prediction: Select image folder for prediction.
+predSelectFolderButton.addEventListener("click", async () => {
+  predFolder = await eel.select_folder()();
+  if (predFolder) {
+    predFolderPathSpan.textContent = predFolder;
+  }
+});
+
+// Prediction: Select ML model file (.dat).
+predSelectModelButton.addEventListener("click", async () => {
+  // This function should open a file dialog filtered for .dat files.
+  mlModelPath = await eel.open_mlFile()();
+  if (mlModelPath) {
+    if (mlModelPath.endsWith(".dat")) {
+      mlModelPathSpan.textContent = mlModelPath;
+    } else {
+      alert("Please select a valid ML model file with .dat extension.");
+    }
+  }
+});
+
+// Prediction: Select Save Folder for XML.
+predSelectSaveFolderButton.addEventListener("click", async () => {
+  predSaveFolder = await eel.select_save_folder()();
+  if (predSaveFolder) {
+    predSaveFolderPath.textContent = predSaveFolder;
+  }
+});
+
+// Prediction: Start predicting landmarks.
+predictButton.addEventListener("click", async () => {
+  if (!predFolder) {
+    alert("Please select an image folder for prediction.");
+    return;
+  }
+  if (!mlModelPath) {
+    alert("Please select an ML model (.dat) file.");
+    return;
+  }
+  if (!predSaveFolder) {
+    alert("Please select a save folder for the XML file.");
+    return;
+  }
+  alert("Prediction started. This may take a few seconds.");
+  // Call your Python function with the ML model path, prediction folder, and save folder.
+  eel.predict_new_landmarks(mlModelPath, predFolder, predSaveFolder)(function(result) {
+    alert("Prediction result saved to: " + predSaveFolder);
+  });
 });

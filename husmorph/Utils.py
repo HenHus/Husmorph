@@ -486,8 +486,7 @@ class ShapePredictorTrainer:
 
 
 
-
-def predict_landmarks(predictor_name, images, ignore=None):
+def predict_landmarks(predictor_name, images, output_folder, ignore=None):
     extensions = {'.jpg', '.JPG', '.jpeg', '.JPEG',}
     predictor = dlib.shape_predictor(predictor_name)
     root = ET.Element('dataset')
@@ -503,7 +502,6 @@ def predict_landmarks(predictor_name, images, ignore=None):
             image_e = ET.Element('image')
             image_e.set('file', str(f))
 
-            
             e = dlib.rectangle(left=1, top=1, right=img.shape[1]-1, bottom=img.shape[0]-1)
             shape = predictor(img, e)
             box = ET.Element('box')
@@ -524,9 +522,8 @@ def predict_landmarks(predictor_name, images, ignore=None):
             image_e.append(box)
             images_e.append(image_e)
 
-    
     folder_name = os.path.basename(images)
-    out_file = f"{folder_name}_output.xml"
+    out_file = os.path.join(output_folder, f"{folder_name}_prediction.xml")
 
     et = ET.ElementTree(root)
     xmlstr = minidom.parseString(ET.tostring(et.getroot())).toprettyxml(indent="   ")
