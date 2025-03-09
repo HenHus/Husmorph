@@ -3,8 +3,6 @@ import os
 import csv
 import base64
 import sys
-import customtkinter as ctk
-from customtkinter import filedialog
 from web.Utils import ShapePredictorTrainer, predict_landmarks
 from PyQt5 import QtWidgets
 import xml.etree.ElementTree as ET
