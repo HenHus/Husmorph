@@ -34,14 +34,11 @@ You can download the application using the links below. The files are hosted on 
 - **File:** DMG installer.
 - **Instructions:** Download the file, drag the application to your `Applications` folder, and launch `Husmorph` from there.
 
-   > **Note:** Mac-users may have to right-click, and then press `open` the first time opening the software to bypass security warnings. Otherwise, it can be found in settings -> security on your computer.
+   > **Note:** To open the software for the first time, Mac-users may have to go to System settings -> Privacy & Security and press 'Open anyways'. I promise that the software is safe to use.
 
 **[Download here (v2.0 early release)](https://drive.google.com/file/d/1EeeiWF8GwBHTh2vyoDpooLWOXrgU_RS9/view?usp=sharing)**
 
 **[Download here (v1)](https://drive.google.com/file/d/1Weko3YBif2mEi5Uz-tU1BdMo0vcGYBuT/view?usp=share_link)**
-
-
-
 
 ---
 
