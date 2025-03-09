@@ -1,6 +1,6 @@
 # HUSMORPH v2.0 (early release)
 
-## Major updates in the new early release version!
+## Major updates in the new 2.0 early release version!
 
 HUSMORPH is a graphical user interface (GUI) designed for landmark placement on images. It supports both manual placement and automated machine learning-based predictions. This versatile tool can be used right out of the box or by running the scripts provided in this repository for more customized workflows.
 
