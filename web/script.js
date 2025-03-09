@@ -125,7 +125,60 @@ function getNaturalCoordinates(e) {
   };
 }
 
+let draggingLandmark = null;  // Will store an object: { index: number, offsetX: number, offsetY: number }
+let isDragging = false;       // True if a drag is in progress.
+let hasDragged = false;       // Flag to differentiate a simple click from a drag.
+
+// Mousedown: check if the click is on an existing landmark.
+canvas.addEventListener("mousedown", function(e) {
+  let coords = getNaturalCoordinates(e); // Get natural coordinates of the click.
+  let imagePath = imageList[currentImageIndex];
+  let landmarks = landmarksData[imagePath] || [];
+  for (let i = 0; i < landmarks.length; i++) {
+    let lm = landmarks[i];
+    let dx = coords.x - lm.x;
+    let dy = coords.y - lm.y;
+    let distance = Math.sqrt(dx * dx + dy * dy);
+    // Use a threshold (e.g., 10 pixels in natural coordinates) to detect a click on a landmark.
+    if (distance < 10) {
+      draggingLandmark = { index: i, offsetX: dx, offsetY: dy };
+      isDragging = true;
+      hasDragged = false;
+      break;
+    }
+  }
+});
+
+// Mousemove: if dragging, update the landmark's position.
+canvas.addEventListener("mousemove", function(e) {
+  if (isDragging && draggingLandmark !== null) {
+    hasDragged = true;
+    let coords = getNaturalCoordinates(e);
+    let imagePath = imageList[currentImageIndex];
+    // Compute new landmark position adjusting for the initial offset.
+    let newX = coords.x - draggingLandmark.offsetX;
+    let newY = coords.y - draggingLandmark.offsetY;
+    // Save as integers.
+    landmarksData[imagePath][draggingLandmark.index] = { x: Math.round(newX), y: Math.round(newY) };
+    drawImage();
+  }
+});
+
+// Mouseup: end dragging.
+canvas.addEventListener("mouseup", function(e) {
+  if (isDragging) {
+    isDragging = false;
+    draggingLandmark = null;
+  }
+});
+
 canvas.addEventListener("click", function (e) {
+
+  if (hasDragged) {
+    hasDragged = false;
+    return;
+  }
+
   let coords = getNaturalCoordinates(e);
   // Invert current transform: natural coordinates = (displayCoord - offset) / currentScaleFactor.
   let imageX = (coords.x - offsetX) / currentScaleFactor;
