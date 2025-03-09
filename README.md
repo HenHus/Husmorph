@@ -1,4 +1,4 @@
-# HUSMORPH v2.0 (early release for MacOS)
+# HUSMORPH v2.0 (early release)
 
 ## Major updates in the new early release version!
 
@@ -6,7 +6,7 @@ HUSMORPH is a graphical user interface (GUI) designed for landmark placement on 
 
 ## Important!
 
-The software is currently very big, and requires 1GB storage.
+The software is currently very big for McOS, and requires 1GB storage. I'm working on this
 
 The startup time is long. Be patient, it can take up to 1 min before the software is running.
 
@@ -26,7 +26,11 @@ You can download the application using the links below. The files are hosted on 
 - **File:** Downloadable ZIP archive.
 - **Instructions:** Extract the archive, and run the `Husmorph` executable from the folder.
 
-**[Download here](https://drive.google.com/file/d/1IC0XUQLshbcBHlt7jbdVgdt0UKDWJ3I_/view?usp=drivesdk)**
+
+
+**[Download here (v2.0 early release)](https://drive.google.com/file/d/1z1Fpo48Ta9zeB7hWuZQfbJTmoHQoKKzR/view?usp=sharing)**
+
+**[Download here (v1)](https://drive.google.com/file/d/1IC0XUQLshbcBHlt7jbdVgdt0UKDWJ3I_/view?usp=drivesdk)**
 
 ---
 
