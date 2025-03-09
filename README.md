@@ -6,9 +6,7 @@ HUSMORPH is a graphical user interface (GUI) designed for landmark placement on 
 
 ## Important!
 
-The software is currently very big for MacOS, and requires 1GB storage. I'm working on this
-
-The startup time is long. Be patient, it can take up to 1 min before the software is running.
+The startup time may long. Be patient, it can take up to 1 min before the software is running.
 
 ## Features
 - Intuitive interface for manual landmark placement on images.
@@ -38,9 +36,9 @@ You can download the application using the links below. The files are hosted on 
 - **File:** DMG installer.
 - **Instructions:** Download the file, drag the application to your `Applications` folder, and launch `Husmorph` from there.
 
-   > **Note:** To open the software for the first time, Mac-users may have to go to System settings -> Privacy & Security and press 'Open anyways'. If the computer needs you to verify even more things, approve it. I promise that the software is safe to use.
+   > **Note:** To open the software for the first time, Mac-users may have to go to System settings -> Privacy & Security and press 'Open anyways' for Husmorph. If the computer needs you to verify even more things, approve it. I promise that the software is safe to use.
 
-**[Download here (v2.0 early release)](https://drive.google.com/file/d/1EeeiWF8GwBHTh2vyoDpooLWOXrgU_RS9/view?usp=sharing)**
+**[Download here (v2.0 early release)](https://drive.google.com/file/d/1_64J_vCBjXSUNO5vsO_IeK7kIzJYTMxl/view?usp=share_link)**
 
 **[Download here (v1)](https://drive.google.com/file/d/1Weko3YBif2mEi5Uz-tU1BdMo0vcGYBuT/view?usp=share_link)**
 
