@@ -17,7 +17,7 @@ def calculate_angle(x1, y1, x2, y2):
     return np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi
 
 # Processing function
-def process_image(file_path, last_valid_line):
+def process_image(file_path, last_valid_length):
     image = cv2.imread(file_path)
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
