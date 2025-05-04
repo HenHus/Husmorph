@@ -91,7 +91,7 @@ function drawImage() {
   let points = landmarksData[imagePath] || [];
   points.forEach((point, index) => {
     ctx.beginPath();
-    ctx.arc(point.x, point.y, 15 / currentScaleFactor, 0, 2 * Math.PI);
+    ctx.arc(point.x, point.y, 10 / currentScaleFactor, 0, 2 * Math.PI);
     ctx.fillStyle = "red";
     ctx.fill();
     ctx.strokeStyle = "blue";
@@ -129,18 +129,25 @@ let draggingLandmark = null;  // Will store an object: { index: number, offsetX:
 let isDragging = false;       // True if a drag is in progress.
 let hasDragged = false;       // Flag to differentiate a simple click from a drag.
 
+function screenToImageCoords(e) {
+  let raw = getNaturalCoordinates(e);    
+  return {
+    x: (raw.x - offsetX) / currentScaleFactor,
+    y: (raw.y - offsetY) / currentScaleFactor
+  };
+}
+
 // Mousedown: check if the click is on an existing landmark.
 canvas.addEventListener("mousedown", function(e) {
-  let coords = getNaturalCoordinates(e); // Get natural coordinates of the click.
+  let { x: imgX, y: imgY } = screenToImageCoords(e);
   let imagePath = imageList[currentImageIndex];
   let landmarks = landmarksData[imagePath] || [];
   for (let i = 0; i < landmarks.length; i++) {
     let lm = landmarks[i];
-    let dx = coords.x - lm.x;
-    let dy = coords.y - lm.y;
-    let distance = Math.sqrt(dx * dx + dy * dy);
-    // Use a threshold (e.g., 10 pixels in natural coordinates) to detect a click on a landmark.
-    if (distance < 10) {
+    let dx = imgX - lm.x;
+    let dy = imgY - lm.y;
+    let dist = Math.hypot(dx, dy);
+    if (dist < 10) {  // threshold in image coords
       draggingLandmark = { index: i, offsetX: dx, offsetY: dy };
       isDragging = true;
       hasDragged = false;
@@ -151,17 +158,17 @@ canvas.addEventListener("mousedown", function(e) {
 
 // Mousemove: if dragging, update the landmark's position.
 canvas.addEventListener("mousemove", function(e) {
-  if (isDragging && draggingLandmark !== null) {
-    hasDragged = true;
-    let coords = getNaturalCoordinates(e);
-    let imagePath = imageList[currentImageIndex];
-    // Compute new landmark position adjusting for the initial offset.
-    let newX = coords.x - draggingLandmark.offsetX;
-    let newY = coords.y - draggingLandmark.offsetY;
-    // Save as integers.
-    landmarksData[imagePath][draggingLandmark.index] = { x: Math.round(newX), y: Math.round(newY) };
-    drawImage();
-  }
+  if (!isDragging || draggingLandmark === null) return;
+  hasDragged = true;
+  let { x: imgX, y: imgY } = screenToImageCoords(e);
+  let imagePath = imageList[currentImageIndex];
+  let i = draggingLandmark.index;
+  // push the landmark to where the mouse is, minus the initial grab-offset
+  landmarksData[imagePath][i] = {
+    x: Math.round(imgX - draggingLandmark.offsetX),
+    y: Math.round(imgY - draggingLandmark.offsetY)
+  };
+  drawImage();
 });
 
 // Mouseup: end dragging.
