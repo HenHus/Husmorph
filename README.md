@@ -1,6 +1,6 @@
-# HUSMORPH v2.0 (early release)
+# HUSMORPH v2.0
 
-## Major updates in the new 2.0 early release version!
+## Major updates in the new 2.0 version!
 
 HUSMORPH is a graphical user interface (GUI) designed for landmark placement on images. It supports both manual placement and automated machine learning-based predictions. This versatile tool can be used right out of the box or by running the scripts provided in this repository for more customized workflows.
 
@@ -26,7 +26,7 @@ You can download the application using the links below. The files are hosted on 
 
 
 
-**[Download here (v2.0 early release)](https://drive.google.com/file/d/1z1Fpo48Ta9zeB7hWuZQfbJTmoHQoKKzR/view?usp=sharing)**
+**[Download here (v2.0)](https://drive.google.com/file/d/1z1Fpo48Ta9zeB7hWuZQfbJTmoHQoKKzR/view?usp=sharing)**
 
 **[Download here (v1)](https://drive.google.com/file/d/1IC0XUQLshbcBHlt7jbdVgdt0UKDWJ3I_/view?usp=drivesdk)**
 
@@ -38,14 +38,26 @@ You can download the application using the links below. The files are hosted on 
 
    > **Note:** To open the software for the first time, Mac-users may have to go to System settings -> Privacy & Security and press 'Open anyways' for Husmorph. If the computer needs you to verify even more things, approve it. I promise that the software is safe to use.
 
-**[Download here (v2.0 early release)](https://drive.google.com/file/d/1_64J_vCBjXSUNO5vsO_IeK7kIzJYTMxl/view?usp=share_link)**
+
+
+**[Download here (v2.1)](https://drive.google.com/file/d/1_kKzySsoFYihC22DNxA3dbxRAAR8EXI2/view?usp=sharing)**
+
+**[Download here (v2.0)](https://drive.google.com/file/d/1_64J_vCBjXSUNO5vsO_IeK7kIzJYTMxl/view?usp=share_link)**
 
 **[Download here (v1)](https://drive.google.com/file/d/1Weko3YBif2mEi5Uz-tU1BdMo0vcGYBuT/view?usp=share_link)**
 
 ---
 
-## What's new in version 2.0?
+## What's new?
 
+### Version 2.1 (MacOS only right now)
+- Placed landmarks can now be dragged around, both in regular window and in zoomed window
+- Added exporting to tps format
+- Added import of tps format (has to include information about image SIZE)
+- Added the scale bar scripts (python, [Anaconda](https://www.anaconda.com/download/success) recommended). These will have to be edited to fit your dataset/scale bar.
+
+
+### Version 2.0
 - Changed graphical technology. The application is now running in a web-based format using chrome
 - Everything is now in a single page, in different sections
 - Landmark annotation and viewing is merged into one new section:
@@ -79,6 +91,7 @@ You can download the application using the links below. The files are hosted on 
 
  **Controls:**
   - **Left-click** to place a landmark.
+  - HOLD **Left-click** on a landmark to move it around.
   - **Right-click** to delete the last placed landmark.
   - Press '**W**' to zoom in on an area to precisely place a landmark.
   - Once all landmarks are placed for an image, press '**D**' to proceed to the next image, '**A**' to go back to the previous image, or use the buttons underneath the image.
