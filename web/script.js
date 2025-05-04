@@ -503,7 +503,7 @@ predictButton.addEventListener("click", async () => {
   });
 });
 
-/* ===================== XML to CSV Conversion ===================== */
+/* ===================== Conversion ===================== */
 const selectFileButton   = document.getElementById("selectFileButton");
 const filePathSpan       = document.getElementById("filePathSpan");
 const conversionSelect   = document.getElementById("conversionSelect");
@@ -514,22 +514,11 @@ let selectedPath = "";
 // When the “Select File…” button is clicked, pick XML or TPS depending on the current dropdown value
 selectFileButton.addEventListener("click", async () => {
   const mode = conversionSelect.value;
-  if (mode === "tpsToXml") {
-    selectedPath = await eel.select_tps_file()();
-  } else {
-    // both xmlToCsv and xmlToTps start from an XML file
-    selectedPath = await eel.select_xml_file()();
-  }
+  selectedPath = await eel.select_file()();
 
   if (selectedPath) {
     filePathSpan.textContent = selectedPath;
   }
-});
-
-// Clear chosen file if user switches mode
-conversionSelect.addEventListener("change", () => {
-  selectedPath = "";
-  filePathSpan.textContent = "";
 });
 
 // One “Convert” button to rule them all
