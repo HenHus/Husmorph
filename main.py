@@ -55,6 +55,14 @@ def select_xml_file():
     return file_path
 
 @eel.expose
+def select_TPS_file():
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+        None, "Select a datafile", "", "TPS Files (*.tps)"
+    )
+    return file_path
+
+@eel.expose
 def get_xml_data(file_path):
     if not os.path.exists(file_path):
         return ""
@@ -188,5 +196,105 @@ def xml_to_csv(xml_file):
         return csv_file
     except Exception as e:
         return f"Error converting XML to CSV: {e}"
+
+@eel.expose 
+def xml_to_tps(xml_path):
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+
+    # collect all images, preserving their order
+    entries = []
+    for idx, img in enumerate(root.findall('.//image')):
+        filename = os.path.basename(img.get('file'))
+        parts = img.find('box').findall('part')
+        coords = [(float(p.get('x')), float(p.get('y'))) for p in parts]
+        entries.append((filename, coords))
+
+    if not entries:
+        raise ValueError("No <image> elements found in XML!")
+
+    lm_count = len(entries[0][1])
+    # sanity check
+    if any(len(coords) != lm_count for _, coords in entries):
+        raise ValueError("Landmark count varies between images!")
+
+    out_path = os.path.splitext(xml_path)[0] + '.tps'
+    with open(out_path, 'w') as f:
+        for idx, (filename, coords) in enumerate(entries):
+            # 1) LM header
+            f.write(f"LM={lm_count}\n")
+            # 2) each landmark line, with a trailing dot
+            for x, y in coords:
+                f.write(f"{x:.0f}. {y:.0f}.\n")
+            # 3) IMAGE and ID
+            f.write(f"IMAGE={filename}\n")
+            f.write(f"ID={idx}\n")
+            # no blank line between blocks
+    return out_path
+
+@eel.expose
+def tps_to_xml(tps_path):
+    # read all non-empty lines
+    with open(tps_path) as f:
+        lines = [l.strip() for l in f if l.strip()]
+
+    entries = []
+    i = 0
+    while i < len(lines):
+        # parse LM
+        if not lines[i].startswith("LM="):
+            raise ValueError(f"Expected 'LM=' at line {i+1}")
+        lm_count = int(lines[i].split('=',1)[1])
+        i += 1
+
+        # read exactly lm_count coords
+        coords = []
+        for _ in range(lm_count):
+            parts = lines[i].split()
+            # e.g. ['290.', '108.']
+            x = float(parts[0].rstrip('.'))
+            y = float(parts[1].rstrip('.'))
+            coords.append((x, y))
+            i += 1
+
+        # parse IMAGE
+        if not lines[i].startswith("IMAGE="):
+            raise ValueError(f"Expected 'IMAGE=' at line {i+1}")
+        filename = lines[i].split('=',1)[1]
+        i += 1
+
+        # parse ID (we don't really need it, but we can sanity-check it)
+        if not lines[i].startswith("ID="):
+            raise ValueError(f"Expected 'ID=' at line {i+1}")
+        img_id = int(lines[i].split('=',1)[1])
+        i += 1
+
+        entries.append((filename, coords))
+
+    # build XML
+    dataset = ET.Element('dataset')
+    ET.SubElement(dataset, 'name').text = 'Converted from TPS'
+    ET.SubElement(dataset, 'comment').text = f"Round‑tripped {os.path.basename(tps_path)}"
+    images_el = ET.SubElement(dataset, 'images')
+
+    for filename, coords in entries:
+        img_el = ET.SubElement(images_el, 'image', {'file': filename})
+        # we don't know the original box dims here—set to zeros or choose defaults
+        box_el = ET.SubElement(img_el, 'box', {
+            'top': '0', 'left': '0',
+            'width': '0', 'height': '0'
+        })
+        for idx, (x, y) in enumerate(coords):
+            ET.SubElement(box_el, 'part', {
+                'name': str(idx),
+                'x':    str(int(x)),
+                'y':    str(int(y))
+            })
+
+    out_path = os.path.splitext(tps_path)[0] + '.xml'
+    ET.ElementTree(dataset).write(out_path,
+                                  encoding='utf-8',
+                                  xml_declaration=True)
+    return out_path
 
 eel.start('index.html', size=(1024, 768))

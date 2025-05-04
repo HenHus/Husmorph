@@ -497,28 +497,53 @@ predictButton.addEventListener("click", async () => {
 });
 
 /* ===================== XML to CSV Conversion ===================== */
-const csvSelectXmlButton = document.getElementById("csvSelectXmlButton");
-const csvXmlPathSpan = document.getElementById("csvXmlPathSpan");
-let csvXmlPath = "";
+const selectFileButton   = document.getElementById("selectFileButton");
+const filePathSpan       = document.getElementById("filePathSpan");
+const conversionSelect   = document.getElementById("conversionSelect");
+const convertButton      = document.getElementById("convertButton");
 
-const convertButton = document.getElementById("convertButton");
+let selectedPath = "";
 
-// Select XML file for CSV conversion.
-csvSelectXmlButton.addEventListener("click", async () => {
-  // Use your Eel function to open a file dialog for XML files.
-  csvXmlPath = await eel.select_xml_file()();
-  if (csvXmlPath) {
-    csvXmlPathSpan.textContent = csvXmlPath;
+// When the “Select File…” button is clicked, pick XML or TPS depending on the current dropdown value
+selectFileButton.addEventListener("click", async () => {
+  const mode = conversionSelect.value;
+  if (mode === "tpsToXml") {
+    selectedPath = await eel.select_tps_file()();
+  } else {
+    // both xmlToCsv and xmlToTps start from an XML file
+    selectedPath = await eel.select_xml_file()();
+  }
+
+  if (selectedPath) {
+    filePathSpan.textContent = selectedPath;
   }
 });
 
-// Convert the selected XML file to CSV.
+// Clear chosen file if user switches mode
+conversionSelect.addEventListener("change", () => {
+  selectedPath = "";
+  filePathSpan.textContent = "";
+});
+
+// One “Convert” button to rule them all
 convertButton.addEventListener("click", async () => {
-  if (!csvXmlPath) {
-    alert("Please select an XML file to convert.");
-    return;
+  if (!selectedPath) {
+    return alert("Please select a file first.");
   }
-  eel.xml_to_csv(csvXmlPath)(function (result) {
-    alert("CSV file saved successfully to: " + result);
-  });
+
+  const mode = conversionSelect.value;
+  try {
+    let out;
+    if (mode === "xmlToCsv") {
+      out = await eel.xml_to_csv(selectedPath)();
+    } else if (mode === "xmlToTps") {
+      out = await eel.xml_to_tps(selectedPath)();
+    } else if (mode === "tpsToXml") {
+      out = await eel.tps_to_xml(selectedPath)();
+    }
+    alert(`Conversion successful!\nSaved to: ${out}`);
+  } catch (err) {
+    console.error(err);
+    alert("Conversion failed: " + err.message);
+  }
 });

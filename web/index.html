@@ -151,7 +151,7 @@
     </style>
   </head>
   <body>
-    <h1 style="font-size: 42px; margin-bottom: 40px;">Husmorph v2.0</h1>
+    <h1 style="font-size: 42px; margin-bottom: 40px">Husmorph v2.0</h1>
     <h2>by Henning H. Kristiansen</h2>
     <!-- Landmarking Section -->
     <div class="section" id="landmarkingSection">
@@ -190,9 +190,9 @@
       </div>
       <div id="folderSelection">
         <button id="selectFolderButton">Upload Image Folder</button>
-        <span id="folderPath" style="font-size: 12px;"></span>
+        <span id="folderPath" style="font-size: 12px"></span>
         <button id="selectSaveFolderButton">Select Save Location</button>
-        <span id="saveFolderPath" style="font-size: 12px;"></span>
+        <span id="saveFolderPath" style="font-size: 12px"></span>
         <button id="loadXMLButton">Upload existing XML</button>
       </div>
       <div id="container">
@@ -202,7 +202,7 @@
         <button id="prevButton">Previous Image</button>
         <button id="nextButton">Next Image</button>
         <button id="saveButton">Save XML</button>
-        <span id="counterText" style="margin-top: 10px;"></span>
+        <span id="counterText" style="margin-top: 10px"></span>
       </div>
     </div>
 
@@ -212,12 +212,12 @@
       <div class="form-group">
         <label for="mlXmlPath">Upload XML-file for training here:</label>
         <button id="mlSelectXmlButton">Upload XML File</button>
-        <span id="mlXmlPathSpan" style="font-size: 12px;"></span>
+        <span id="mlXmlPathSpan" style="font-size: 12px"></span>
       </div>
       <div class="form-group">
         <label for="mlXmlPath">Select save destination for the model:</label>
         <button id="mlSelectSaveFolderButton">Select Folder</button>
-        <span id="mlSaveFolderPath" style="font-size: 12px;"></span>
+        <span id="mlSaveFolderPath" style="font-size: 12px"></span>
       </div>
       <div class="slider-group">
         <label for="trialsRange">Choose Amounts of Trials to run:</label>
@@ -225,13 +225,15 @@
         <div class="slider-value">Trials: <span id="trialsValue">20</span></div>
       </div>
       <div class="slider-group">
-        <label for="threadsRange">Amounts of Threads (don't change if uncertain):</label>
+        <label for="threadsRange"
+          >Amounts of Threads (don't change if uncertain):</label
+        >
         <input type="range" id="threadsRange" min="1" max="25" value="5" />
         <div class="slider-value">
           Threads: <span id="threadsValue">5</span>
         </div>
       </div>
-      <button id="startButton" style="margin-top: 3rem;">Start training</button>
+      <button id="startButton" style="margin-top: 3rem">Start training</button>
     </div>
 
     <!-- Prediction Section -->
@@ -240,29 +242,59 @@
       <div class="form-group">
         <label>Upload image folder to predict landmarks on:</label>
         <button id="predSelectFolderButton">Upload Folder</button>
-        <span id="predFolderPath" style="font-size: 12px;"></span>
+        <span id="predFolderPath" style="font-size: 12px"></span>
       </div>
       <div class="form-group">
         <label>Select ML Model to use (.dat file):</label>
         <button id="predSelectModelButton">Select ML Model</button>
-        <span id="mlModelPathSpan" style="font-size: 12px;"></span>
+        <span id="mlModelPathSpan" style="font-size: 12px"></span>
       </div>
       <div class="form-group">
         <label>Select save location for XML:</label>
         <button id="predSelectSaveFolderButton">Select Save Folder</button>
-        <span id="predSaveFolderPath" style="font-size: 12px;"></span>
+        <span id="predSaveFolderPath" style="font-size: 12px"></span>
       </div>
-      <button id="predictButton" style="margin-top: 3rem;">Predict Landmarks</button>
+      <button id="predictButton" style="margin-top: 3rem">
+        Predict Landmarks
+      </button>
     </div>
 
     <!-- XML to CSV Conversion Section -->
-    <div class="section" id="xmlToCsvSection">
-      <h2>Convert XML to CSV</h2>
+    <div class="section" id="conversionSection">
+      <h2>Data Format Conversion</h2>
       <div class="form-group">
-        <button id="csvSelectXmlButton">Select XML File</button>
-        <span id="csvXmlPathSpan"></span>
+      <button id="selectFileButton">Select File…</button>
+      <span
+        id="filePathSpan"
+        style="
+        display: inline-block;
+        margin-left: 10px;
+        font-size: 14px;
+        "
+      ></span>
       </div>
-      <button id="convertButton" style="margin-top: 3rem;">Convert to CSV</button>
+      <div class="form-group" style="margin-top: 20px;">
+      <select
+        id="conversionSelect"
+        style="width: 50%; padding: 5px; font-size: 16px"
+      >
+        <option value="xmlToCsv">XML → CSV</option>
+        <option value="xmlToTps">XML → TPS</option>
+        <option value="tpsToXml">TPS → XML</option>
+      </select>
+      </div>
+      <div class="form-group" style="margin-top: 20px;">
+      <button
+        id="convertButton"
+        style="
+        width: 50%;
+        padding: 10px 20px;
+        font-size: 18px;
+        "
+      >
+        Convert
+      </button>
+      </div>
     </div>
 
     <script src="/eel.js"></script>
