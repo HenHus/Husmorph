@@ -107,7 +107,7 @@ Once training is complete, the model can be used for prediction by uploading a i
 
 ### Exporting Data
 
-Currently, we only support exporting landmark data from XML to CSV format. Support for additional formats is planned for future updates.
+Currently, we support exporting landmark data from XML to CSV and tps format. It is also supported to import tps, if the tps includes information about image SIZE. See the code logics for specifics.
 
 ---
 
