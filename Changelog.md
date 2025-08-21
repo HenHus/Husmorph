@@ -13,7 +13,7 @@
    - You can iterate back and forth in your image folder
    - It's possible to upload existing landmark data along with the images, edit the data, and save it back to the same file
    - Added hotkeys:
-      - Hold **W** to zoom in on a spesific area
+      - Hold **W** to zoom in on a specific area
       - Press **A** to go to previous image
       - Press **D** to go to next image
       - Press **S** to save the landmark data
